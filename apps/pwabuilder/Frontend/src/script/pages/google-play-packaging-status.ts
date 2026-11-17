@@ -13,6 +13,7 @@ import '@awesome.me/webawesome/dist/components/card/card.js';
 import '@awesome.me/webawesome/dist/components/icon/icon.js';
 import '@awesome.me/webawesome/dist/components/spinner/spinner.js';
 import { packageSupportIssueBody } from "../utils/package-job-access";
+import { PackageDeliveryDiagnostics, packageFailureDetails, PackageRequestError } from "../utils/package-delivery-diagnostics";
 
 /**
  * A page that shows the status of a Google Play packaging job.
@@ -35,11 +36,26 @@ export class GooglePlayPackagingStatus extends LitElement {
     private hasRecordedCompletion = false;
     private hasRecordedFailure = false;
     private pollQueryErrorCount = 0; // Number of consecutive errors when querying for job status
+    private deliveryDiagnostics: PackageDeliveryDiagnostics | null = null;
+    private lastReportedStatus: GooglePlayPackageJob["status"] | null = null;
+    private downloadAttempt = 0;
+    private readonly onOffline = () => this.reportDelivery("offline");
+    private readonly onOnline = () => this.reportDelivery("online");
+    private readonly onPageHide = () => this.reportDelivery("page-left");
+    private readonly onVisibilityChange = () => this.reportDelivery("visibility-changed");
+    private readonly onClientError = (event: ErrorEvent) => this.reportDelivery("client-error", packageFailureDetails(event.error));
+    private readonly onUnhandledRejection = (event: PromiseRejectionEvent) => this.reportDelivery("client-error", packageFailureDetails(event.reason));
 
     static styles = [googlePlayPackagingStatusStyles];
 
     connectedCallback(): void {
         super.connectedCallback();
+        window.addEventListener("offline", this.onOffline);
+        window.addEventListener("online", this.onOnline);
+        window.addEventListener("pagehide", this.onPageHide);
+        document.addEventListener("visibilitychange", this.onVisibilityChange);
+        window.addEventListener("error", this.onClientError);
+        window.addEventListener("unhandledrejection", this.onUnhandledRejection);
 
         // See if job ID is set in the URL as the jobid query string.
         const search = new URLSearchParams(window.location.search);
@@ -50,8 +66,29 @@ export class GooglePlayPackagingStatus extends LitElement {
         }
     }
 
+    disconnectedCallback(): void {
+        this.reportDelivery("page-left");
+        window.removeEventListener("offline", this.onOffline);
+        window.removeEventListener("online", this.onOnline);
+        window.removeEventListener("pagehide", this.onPageHide);
+        document.removeEventListener("visibilitychange", this.onVisibilityChange);
+        window.removeEventListener("error", this.onClientError);
+        window.removeEventListener("unhandledrejection", this.onUnhandledRejection);
+        super.disconnectedCallback();
+    }
+
+    private reportDelivery(...[event, details]: Parameters<PackageDeliveryDiagnostics["report"]>): void {
+        const jobId = this.jobId || this.job?.id;
+        if (!jobId) return;
+        if (this.deliveryDiagnostics?.jobId !== jobId) {
+            this.deliveryDiagnostics = new PackageDeliveryDiagnostics(jobId);
+        }
+        this.deliveryDiagnostics.report(event, { jobStatus: this.job?.status, ...details });
+    }
+
     updated(changedProperties: PropertyValues<this>) {
         if (changedProperties.has("jobId") && this.jobId) {
+            this.reportDelivery("page-opened");
             const localJobId = this.jobId;
             setTimeout(() => this.pollJob(localJobId), this.pollIntervalMs);
             this.jobTimeoutHandle = window.setTimeout(() => this.jobTimedOut(), this.maxWaitTimeMs);
@@ -215,9 +252,11 @@ export class GooglePlayPackagingStatus extends LitElement {
             this.pollQueryErrorCount = 0; // Reset on successful query
             this.job = job;
         } catch (error) {
+            this.reportDelivery("poll-failed", packageFailureDetails(error));
             if (this.pollQueryErrorCount < 1) {
                 // First failure: wait 10 seconds and try again before showing the error.
                 this.pollQueryErrorCount++;
+                this.reportDelivery("poll-retry");
                 setTimeout(() => this.pollJob(jobId), this.pollQueryRetryDelayMs);
             } else {
                 this.pollJobFailed(error);
@@ -225,6 +264,10 @@ export class GooglePlayPackagingStatus extends LitElement {
             return;
         }
 
+        if (this.lastReportedStatus !== job.status) {
+            this.reportDelivery("status-changed", { jobStatus: job.status });
+            this.lastReportedStatus = job.status;
+        }
         this.ensureLogContains(job.logs);
         if (job.status === "Completed") {
             await this.jobCompleted(job);
@@ -256,10 +299,15 @@ export class GooglePlayPackagingStatus extends LitElement {
         try {
             const blob = await this.downloadPackageZipWithRetry(job.id);
             this.downloadBlob(blob, job);
+            // A synthetic anchor click confirms handoff only; browsers do not expose whether the user saved the file.
+            this.reportDelivery("download-handoff", { bytes: blob.size, attempt: this.downloadAttempt });
             this.hasDownloadFailed = false;
             this.hasFailed = false;
             this.appendLog("Package created successfully. Download has begun.");
         } catch (downloadError) {
+            if (!(downloadError instanceof PackageRequestError)) {
+                this.reportDelivery("download-failed", { phase: "handoff", ...packageFailureDetails(downloadError) });
+            }
             this.downloadFailed(job, downloadError);
         } finally {
             this.isDownloading = false;
@@ -271,13 +319,27 @@ export class GooglePlayPackagingStatus extends LitElement {
      * Transient network failures (e.g. "TypeError: Failed to fetch") can occur even though the package was built successfully.
      */
     private async downloadPackageZipWithRetry(jobId: string): Promise<Blob> {
+        const download = async (): Promise<Blob> => {
+            const attempt = ++this.downloadAttempt;
+            const started = performance.now();
+            this.reportDelivery("download-started", { attempt });
+            try {
+                const blob = await downloadGooglePlayPackageZip(jobId);
+                this.reportDelivery("download-body-read", { attempt, bytes: blob.size, durationMs: Math.round(performance.now() - started) });
+                return blob;
+            } catch (error) {
+                this.reportDelivery("download-failed", { attempt, ...packageFailureDetails(error), durationMs: Math.round(performance.now() - started) });
+                throw error;
+            }
+        };
         try {
-            return await downloadGooglePlayPackageZip(jobId);
+            return await download();
         } catch (firstError) {
             console.warn("Google Play package download failed. Retrying automatically.", firstError);
             this.appendLog(`Download failed (${firstError}). Retrying automatically...`);
+            this.reportDelivery("download-retry", { attempt: this.downloadAttempt + 1 });
             await new Promise(resolve => setTimeout(resolve, this.autoDownloadRetryDelayMs));
-            return await downloadGooglePlayPackageZip(jobId);
+            return await download();
         }
     }
 
@@ -287,16 +349,19 @@ export class GooglePlayPackagingStatus extends LitElement {
         }
 
         this.appendLog("Retrying download...");
+        this.reportDelivery("download-retry", { attempt: this.downloadAttempt + 1 });
         await this.downloadPackage(this.job);
     }
 
     private jobTimedOut(): void {
+        this.reportDelivery("poll-timeout");
         this.appendLog("[error] Timed out waiting for Google Play packaging job to complete.");
         this.hasFailed = true;
         this.recordPackagingFailed(this.job?.analysisId ?? null, "Timed out waiting for Google Play packaging job to complete.");
     }
 
     private pollJobFailed(error: unknown): void {
+        this.reportDelivery("poll-stopped", packageFailureDetails(error));
         clearTimeout(this.jobTimeoutHandle);
         this.appendLog(`[error] ${error instanceof Error ? error.message : "Unable to query packaging status."}`);
         this.hasFailed = true;

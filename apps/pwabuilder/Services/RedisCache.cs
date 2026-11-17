@@ -25,6 +25,9 @@ public interface IRedisCache
     /// <summary>Reads only the separate diagnostics key for a validated support UUID.</summary>
     Task<PackageDiagnosticsData?> GetPackageDiagnosticsAsync(Guid supportReference);
 
+    /// <summary>Reads the bounded delivery log list by support UUID, without reading artifacts or owner records.</summary>
+    Task<IReadOnlyList<string>> GetPackageDeliveryLogsAsync(Guid supportReference);
+
     /// <summary>Reads up to fifty UUIDs from the fourteen-day failed diagnostics sorted-set window.</summary>
     Task<IReadOnlyList<string>> GetRecentFailedPackageReferencesAsync();
 
@@ -72,6 +75,11 @@ public interface IRedisCache
 public class InMemoryRedisCache : IRedisCache
 {
     private readonly System.Collections.Concurrent.ConcurrentDictionary<string, object> store = new();
+
+    /// <inheritdoc/>
+    public Task<IReadOnlyList<string>> GetPackageDeliveryLogsAsync(Guid supportReference) =>
+        Task.FromResult<IReadOnlyList<string>>(store.TryGetValue($"package-delivery:{supportReference:D}", out var value)
+            && value is System.Collections.Concurrent.ConcurrentQueue<string> logs ? logs.TakeLast(100).ToArray() : []);
 
     /// <inheritdoc/>
     public Task<PackageDiagnosticsData?> GetPackageDiagnosticsAsync(Guid supportReference) =>
@@ -157,6 +165,18 @@ public class RedisCache : IRedisCache
     {
         this.redisTask = InitializeRedis(options);
         this.logger = logger;
+    }
+
+    /// <inheritdoc/>
+    public async Task<IReadOnlyList<string>> GetPackageDeliveryLogsAsync(Guid supportReference)
+    {
+        if (supportReference == Guid.Empty)
+        {
+            return [];
+        }
+        var redis = await redisTask;
+        var entries = await redis.ListRangeAsync($"package-delivery:{supportReference:D}", -100, -1);
+        return entries.Select(entry => entry.ToString()).ToArray();
     }
 
     /// <inheritdoc/>

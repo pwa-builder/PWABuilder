@@ -150,6 +150,33 @@ public sealed class SupportAdminTests
         Assert.Contains("Starting service worker scan", analysisHtml);
     }
 
+    /// <summary>Delivery logs survive worker updates and are sanitized without granting artifact access.</summary>
+    [Fact]
+    public async Task Package_details_include_separate_sanitized_delivery_logs()
+    {
+        await using var app = await CreateAppAsync(true);
+        var reference = Guid.NewGuid();
+        var cache = app.Services.GetRequiredService<IRedisCache>();
+        await cache.EnqueueAsync($"package-delivery:{reference:D}", "browser poll-failed online=false");
+        await cache.EnqueueAsync($"package-delivery:{reference:D}", "server-download-failed password=secret-marker");
+        var data = Package(reference);
+        data.Logs.InsertRange(0, Enumerable.Repeat("older worker progress", 100));
+        await cache.SaveAsync($"package-diagnostics:{reference:D}", data);
+        var client = CreateClient(app, Principal(true, true, true));
+        var response = await client.GetAsync($"/api/admin/package-jobs/{reference:D}");
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var json = await response.Content.ReadAsStringAsync();
+        Assert.Contains("poll-failed", json);
+        Assert.Contains("server-download-failed", json);
+        Assert.DoesNotContain("secret-marker", json);
+        var result = JsonSerializer.Deserialize<SupportPackage>(json, new JsonSerializerOptions(JsonSerializerDefaults.Web));
+        Assert.NotNull(result);
+        Assert.Equal(100, result.Logs.Count);
+        var missing = Guid.NewGuid();
+        await cache.EnqueueAsync($"package-delivery:{missing:D}", "orphaned-delivery-log");
+        Assert.Equal(HttpStatusCode.NotFound, (await client.GetAsync($"/api/admin/package-jobs/{missing:D}")).StatusCode);
+    }
+
     /// <summary>The unauthenticated shell exposes only sign-in assets and public IDs, not diagnostics or tokens.</summary>
     [Fact]
     public async Task Public_shell_and_configuration_expose_no_diagnostics()

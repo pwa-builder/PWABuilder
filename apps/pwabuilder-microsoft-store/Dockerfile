@@ -1,11 +1,11 @@
-# Use a serviced Windows Server 2022 LTSC build compatible with GitHub Actions.
-FROM mcr.microsoft.com/windows/server:10.0.20348.5499
+# November 2026 servicing (KB5131090); retain Windows Server 2022 host compatibility.
+FROM mcr.microsoft.com/windows/server:10.0.20348.5870
 
-# Install .NET 10.0.403 SDK (includes the serviced 10.0.14 runtime)
+# Install .NET 10.0.404 SDK (includes the serviced 10.0.15 runtime)
 RUN powershell -Command \
     "$ProgressPreference = 'SilentlyContinue'; \
-    Invoke-WebRequest -Uri 'https://builds.dotnet.microsoft.com/dotnet/Sdk/10.0.403/dotnet-sdk-10.0.403-win-x64.exe' -OutFile 'dotnet-sdk-installer.exe'; \
-    $expectedHash = 'cca8d82788252a8d13e778150a5e8393e204af274a12d19de7da10a0d98370a4edd5361ce5da73d0db13997fe5191e5db3a69c9665c6ddd6fba0d77845046f3c'; \
+    Invoke-WebRequest -Uri 'https://builds.dotnet.microsoft.com/dotnet/Sdk/10.0.404/dotnet-sdk-10.0.404-win-x64.exe' -OutFile 'dotnet-sdk-installer.exe'; \
+    $expectedHash = 'c86b0aeb8c5ce0cd6dd290fb2b10bb112302d849d05cbcbcbc0ed4e5a15f66d1376e05bc77910bf66580d6a779390ec863e2bd6e51e7e21880d587b8b30c7b08'; \
     $actualHash = (Get-FileHash -Path 'dotnet-sdk-installer.exe' -Algorithm SHA512).Hash; \
     if ($actualHash -ne $expectedHash) { throw 'The .NET SDK installer checksum is invalid.'; } \
     Start-Process -FilePath 'dotnet-sdk-installer.exe' -ArgumentList '/quiet' -Wait; \
@@ -17,6 +17,18 @@ RUN ["powershell.exe", "Set-ExecutionPolicy RemoteSigned -Scope CurrentUser"]
 RUN powershell  Invoke-WebRequest https://go.microsoft.com/fwlink/?linkid=2120843 -OutFile ./downloadsdk.exe
 RUN ["powershell.exe", "Start-Process -Wait -FilePath ./downloadsdk.exe -ArgumentList '/quiet /norestart /log log.txt'"]
 RUN ["powershell.exe", "Get-Content log.txt"]
+
+# .NET SDK servicing does not patch Windows' built-in .NET Framework (KB5127687).
+RUN powershell -Command \
+    "$ErrorActionPreference = 'Stop'; \
+    foreach ($framework in @('Framework', 'Framework64')) { \
+        foreach ($assembly in @('System.Core.dll', 'Mscorlib.dll')) { \
+            $path = Join-Path $env:WINDIR ('Microsoft.NET\' + $framework + '\v4.0.30319\' + $assembly); \
+            $info = (Get-Item -LiteralPath $path).VersionInfo; \
+            $version = [version]::new($info.FileMajorPart, $info.FileMinorPart, $info.FileBuildPart, $info.FilePrivatePart); \
+            if ($version -lt [version]'4.8.4811.0') { throw ('Unpatched .NET Framework: ' + $path + ' (' + $version + '). Rebase onto a serviced Windows image.'); } \
+        } \
+    }"
 
 WORKDIR /app
 EXPOSE 5000

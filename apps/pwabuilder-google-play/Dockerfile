@@ -33,6 +33,7 @@ WORKDIR ${DIRWORK}
 RUN echo export JAVA_HOME="/usr/lib/jvm/java-17-openjdk-$(uname -m)/" >> /etc/jdk.env && \
     echo . /etc/jdk.env >> /etc/bash.bashrc && echo . /etc.jdk.env >> /etc/profile && \
     apt-get update -qq && \
+    apt-get upgrade -y --no-install-recommends && \
     apt-get install -qq --no-install-recommends \
     apt-utils locales unzip curl git build-essential openjdk-11-jdk openjdk-17-jdk \
     wget zip zipalign ruby-full tzdata && \
@@ -55,6 +56,8 @@ FROM pre-base AS base
 #     overwrite it in place with the patched 3.18.0 (API-compatible). The 3.16.0
 #     filename is kept intentionally so every bundled *-classpath.jar manifest still
 #     resolves it; scanners read the jar's internal metadata and see 3.18.0.
+#   * Guava is updated in place to 33.7.2-jre for GHSA-xxph-c9ww-hj94,
+#     preserving the SDK's manifest references in the same way.
 RUN wget --quiet -O sdk-tools.zip \
     "https://dl.google.com/android/repository/commandlinetools-linux-${ANDROID_SDK_TOOLS_VERSION}_latest.zip" && \
     mkdir -p "$ANDROID_HOME/cmdline-tools" && \
@@ -71,7 +74,10 @@ RUN wget --quiet -O sdk-tools.zip \
     echo yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses && \
     rm -rf "$ANDROID_HOME/cmdline-tools/latest/lib/external/lint-psi" && \
     wget --quiet -O "$ANDROID_HOME/cmdline-tools/latest/lib/external/org/apache/commons/commons-lang3/3.16.0/commons-lang3-3.16.0.jar" \
-    "https://repo1.maven.org/maven2/org/apache/commons/commons-lang3/3.18.0/commons-lang3-3.18.0.jar"
+    "https://repo1.maven.org/maven2/org/apache/commons/commons-lang3/3.18.0/commons-lang3-3.18.0.jar" && \
+    wget --quiet -O "$ANDROID_HOME/cmdline-tools/latest/lib/external/com/google/guava/guava/33.3.1-jre/guava-33.3.1-jre.jar" \
+    "https://repo1.maven.org/maven2/com/google/guava/guava/33.7.2-jre/guava-33.7.2-jre.jar" && \
+    echo "b530942257fb935f8b2cfaa5f8eb5bd59c555fd8e8d01b8ce98912e077ea606c  $ANDROID_HOME/cmdline-tools/latest/lib/external/com/google/guava/guava/33.3.1-jre/guava-33.3.1-jre.jar" | sha256sum -c -
 
 
 FROM base AS jenv-base
@@ -93,7 +99,7 @@ RUN mkdir -p "$ANDROID_HOME"/.android && \
 FROM pre-minimal AS node-final
 RUN curl -sL https://deb.nodesource.com/setup_${NODE_VERSION} | bash - && \
     apt-get update -qq && \
-    apt-get install -qq nodejs yarn && \
+    apt-get install -qq nodejs=24.22.3-1nodesource1 yarn && \
     rm -rf /var/lib/apt/lists/*
 
 FROM node-final AS builder

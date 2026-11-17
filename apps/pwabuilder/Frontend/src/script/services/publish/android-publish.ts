@@ -10,6 +10,7 @@ import { findSuitableIcon, findBestAppIcon } from '../../utils/icons';
 import { ManifestContext } from '../../utils/interfaces';
 import { getHeaders } from '../../utils/platformTrackingHeaders';
 import { getPackageAuthorization, savePackageReceipt } from "../../utils/package-job-access";
+import { PackageRequestError } from "../../utils/package-delivery-diagnostics";
 
 export let hasGeneratedAndroidPackage = false;
 
@@ -50,19 +51,20 @@ export async function enqueueGooglePlayPackageJob(androidOptions: AndroidPackage
  * Gets the Google Play package job with the specified ID. Throw an error if the job couldn't be found or if the job fetch otherwise failed.
  */
 export async function getGooglePlayPackageJob(jobId: string): Promise<GooglePlayPackageJob> {
-    const serviceUrl = await getAndroidServiceUrl(import.meta.env.DEV);
-    const jobFetch = await fetch(`${serviceUrl}/getPackageJob?id=${encodeURIComponent(jobId)}`, {
-        headers: { Authorization: getPackageAuthorization(jobId, localStorage) },
-        cache: "no-store"
-    });
+    const jobFetch = await fetchPackageResource(jobId, "getPackageJob");
     if (!jobFetch.ok) {
         if (jobFetch.status === 403 || jobFetch.status === 404) {
-            throw new Error("Job access has expired or is unavailable in this browser profile and site. Please create a new package.");
+            throw new PackageRequestError("response", "Job access has expired or is unavailable in this browser profile and site. Please create a new package.", jobFetch.status);
         }
-        throw new Error(`Error fetching Google Play package job status: ${jobFetch.statusText}`);
+        throw new PackageRequestError("response", `Error fetching Google Play package job status: ${jobFetch.statusText}`, jobFetch.status);
     }
 
-    return await jobFetch.json();
+    try {
+        return await jobFetch.json();
+    } catch (error) {
+        throw new PackageRequestError("body", "Unable to read Google Play package job status.", jobFetch.status,
+            error instanceof Error ? error.name : "Other");
+    }
 }
 
 /**
@@ -71,15 +73,33 @@ export async function getGooglePlayPackageJob(jobId: string): Promise<GooglePlay
  * @returns The zip file as a Blob.
  */
 export async function downloadGooglePlayPackageZip(jobId: string): Promise<Blob> {
-    const serviceUrl = await getAndroidServiceUrl(import.meta.env.DEV);
-    const zipFetch = await fetch(`${serviceUrl}/downloadPackageZip?id=${encodeURIComponent(jobId)}`, {
-        headers: { Authorization: getPackageAuthorization(jobId, localStorage) },
-        cache: "no-store"
-    });
+    const zipFetch = await fetchPackageResource(jobId, "downloadPackageZip");
     if (!zipFetch.ok) {
-        throw new Error(`Error downloading Google Play package ZIP: ${zipFetch.statusText}`);
+        throw new PackageRequestError("response", `Error downloading Google Play package ZIP: ${zipFetch.statusText}`, zipFetch.status);
     }
-    return await zipFetch.blob();
+    try {
+        return await zipFetch.blob();
+    } catch (error) {
+        throw new PackageRequestError("body", "Unable to read the Google Play package ZIP response.", zipFetch.status,
+            error instanceof Error ? error.name : "Other");
+    }
+}
+
+async function fetchPackageResource(jobId: string, resource: "getPackageJob" | "downloadPackageZip"): Promise<Response> {
+    let phase: "configuration" | "authorization" | "request" = "configuration";
+    try {
+        const serviceUrl = await getAndroidServiceUrl(import.meta.env.DEV);
+        phase = "authorization";
+        const authorization = getPackageAuthorization(jobId, localStorage);
+        phase = "request";
+        return await fetch(`${serviceUrl}/${resource}?id=${encodeURIComponent(jobId)}`, {
+            headers: { Authorization: authorization },
+            cache: "no-store"
+        });
+    } catch (error) {
+        throw new PackageRequestError(phase, error instanceof Error ? error.message : "Package request failed.", undefined,
+            error instanceof Error ? error.name : "Other");
+    }
 }
 
 export function emptyAndroidPackageOptions(): AndroidPackageOptions {

@@ -95,8 +95,11 @@ Service image builds use `docker build --pull --no-cache` to refresh base images
 and rerun OS and runtime package installation rather than reuse cached layers.
 This increases build time but allows serviced .NET, Node.js, and OS packages to
 be picked up on rebuild. Explicitly pinned inputs still require source updates;
-the Windows packager installs .NET SDK 10.0.403 (runtime 10.0.14) and verifies
+the Windows packager installs .NET SDK 10.0.404 (runtime 10.0.15) and verifies
 the installer against Microsoft's published SHA-512 checksum.
+The web image uses .NET runtime 10.0.15 and Node.js 26.13.1; the Android image
+uses Node.js 24.22.3. Linux final images upgrade OS packages during the build.
+Keep these pins serviced when new security releases are published.
 After a runtime update, verify versions and vulnerability scan results in the
 built images, test the staging slots, and promote the verified image references through
 the normal deployment process. A source change or rebuild alone does not

@@ -61,3 +61,41 @@ try {
     Remove-Item -LiteralPath $outputPath -Force
     Remove-Variable windowsDeploymentTest -Scope Global -ErrorAction SilentlyContinue
 }
+
+& {
+    $dockerfile = Get-Content (Join-Path $PSScriptRoot '..\..\..\apps\pwabuilder-microsoft-store\Dockerfile') -Raw
+    $match = [regex]::Match($dockerfile, '(?s)RUN powershell -Command \\\r?\n    "(\$ErrorActionPreference.*?foreach.*?})"')
+    if (-not $match.Success) { throw 'Windows Framework servicing guard not found.' }
+    $guard = [scriptblock]::Create(($match.Groups[1].Value -replace ' \\\r?\n\s*', ' '))
+
+    function Get-Item {
+        param([string] $LiteralPath)
+        $version = [version]$(if ($case.DefaultVersion) { $case.DefaultVersion } else { '4.8.4811.0' })
+        if ($case.File -and $LiteralPath -like "*\$($case.Architecture)\*\$($case.File)") {
+            if (-not $case.Version) { throw 'Framework assembly is missing.' }
+            $version = [version]$case.Version
+        }
+        [pscustomobject]@{
+            VersionInfo = [pscustomobject]@{
+                FileMajorPart = $version.Major
+                FileMinorPart = $version.Minor
+                FileBuildPart = $version.Build
+                FilePrivatePart = $version.Revision
+            }
+        }
+    }
+
+    foreach ($case in @(
+        @{ Name = 'Rejects old x64 mscorlib'; Architecture = 'Framework64'; File = 'Mscorlib.dll'; Version = '4.8.4795.0'; Reject = $true }
+        @{ Name = 'Rejects old x86 mscorlib'; Architecture = 'Framework'; File = 'Mscorlib.dll'; Version = '4.8.4795.0'; Reject = $true }
+        @{ Name = 'Rejects missing mscorlib'; Architecture = 'Framework64'; File = 'Mscorlib.dll'; Reject = $true }
+        @{ Name = 'Rejects old System.Core'; Architecture = 'Framework64'; File = 'System.Core.dll'; Version = '4.8.4805.0'; Reject = $true }
+        @{ Name = 'Accepts October servicing'; DefaultVersion = '4.8.4811.0'; Reject = $false }
+        @{ Name = 'Accepts newer servicing'; DefaultVersion = '4.8.4820.0'; Reject = $false }
+    )) {
+        $rejected = $false
+        try { & $guard } catch { $rejected = $true }
+        if ($rejected -ne $case.Reject) { throw "$($case.Name): expected reject=$($case.Reject), actual=$rejected." }
+        Write-Host "PASS: $($case.Name)"
+    }
+}

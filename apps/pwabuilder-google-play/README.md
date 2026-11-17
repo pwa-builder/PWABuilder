@@ -52,6 +52,22 @@ To deploy to production, swap staging and production or deploy the tested digest
 Retain deployed and rollback images in ACR. Existing production slots using
 mutable tags must be pinned separately to verified known-good digests.
 
+### Container dependency servicing
+
+The lockfile resolves `brace-expansion` to 5.0.12, which includes the fixes for
+CVE-2026-102276, CVE-2026-102278, and GHSA-q2hr-2g5m-vwhr. This version is
+available in the container build's configured npm mirror; 5.0.13 is not.
+The production tree also includes patched `node-forge`, `minimatch`, `qs`,
+`follow-redirects`, and MSAL Node (through `@azure/identity`).
+Keep the lockfile committed: the container installs it with `npm ci` and retains
+these transitive dependencies after pruning development packages.
+The image installs Node.js 24.22.3 and upgrades Ubuntu packages during the build
+to pick up APT and PCRE2 security fixes. Android SDK's bundled Guava is replaced
+with checksum-verified 33.7.2-jre at its original path so SDK manifest references
+continue to resolve; `sdkmanager` runs again after replacement during the build.
+Rebuild and deploy every affected image variant, then rescan the deployed
+digests; updating the lockfile does not remediate existing containers.
+
 ### Web slot routing to CloudAPK
 
 The web frontend reads `GET /api/packaging/config` before every enqueue, poll, and
@@ -124,6 +140,42 @@ or artifact locations. They are available through the PWABuilder Entra-protected
 `/admin` pages; admin authorization is independent of customer tokens.
 The web app must be configured to read the same Redis instance/database.
 The two services' separate in-memory development stores are not shared.
+
+#### Package delivery diagnostics
+
+The private package detail page also includes `[delivery]` logs from the browser
+and download server, correlated by the same support reference. They distinguish
+polling failures and retries, status changes, page visibility/navigation, online
+state, uncaught client error categories, download attempts and retries, completed
+response-body reads, and browser download handoff. Server events record storage
+open failures, stream failures, response completion, and disconnected clients.
+Measurements include the request phase, HTTP status, attempt, duration, and byte
+count where available. A browser handoff or completed server response does **not**
+prove that a file was saved to disk.
+
+Browsers submit small batches to `POST /packageJobDiagnostics?id=...`, using the
+same owner bearer token as status/download requests. The server accepts only fixed
+event names, enums, booleans, and bounded numeric fields; it rejects free text,
+URLs, and extra fields. No signing inputs, owner tokens, package URLs, exception
+messages, or stacks are recorded. Browser events are client-reported observations,
+not authoritative job state. Existing automatic and manual download retries are
+unchanged.
+
+Delivery logs use a separate Redis list, `package-delivery:<supportReference>`,
+atomically trimmed to the newest 100 entries with a 14-day TTL, so worker snapshot
+updates cannot overwrite them. The support API sanitizes these entries again and
+only reads them after validating the parent diagnostics record. They do not change
+the build status or extend owner access. Server console events also include
+`supportReference` for environments with console trace collection enabled.
+
+Reporting is best-effort and never blocks packaging: each page queues at most 60
+events, uses five-second submission timeouts and keepalive requests, and retains
+failed batches in memory for the next event (including going online). Diagnostics
+retain their initially resolved CloudAPK destination, while actual packaging
+operations continue resolving fresh slot configuration. A closed/crashed browser,
+lost network, missing/expired owner credential, or unavailable configuration may
+prevent delivery; absence of a client event is not proof it did not occur. No new
+telemetry SDK, deployment setting, or production logging configuration is required.
 
 The admin dashboard pages analyses and packages independently using Previous/Next
 controls, with up to 50 failures per page within a fixed 14-day window. Package
