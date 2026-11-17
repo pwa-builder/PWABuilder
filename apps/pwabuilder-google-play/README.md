@@ -141,6 +141,42 @@ or artifact locations. They are available through the PWABuilder Entra-protected
 The web app must be configured to read the same Redis instance/database.
 The two services' separate in-memory development stores are not shared.
 
+#### Package delivery diagnostics
+
+The private package detail page also includes `[delivery]` logs from the browser
+and download server, correlated by the same support reference. They distinguish
+polling failures and retries, status changes, page visibility/navigation, online
+state, uncaught client error categories, download attempts and retries, completed
+response-body reads, and browser download handoff. Server events record storage
+open failures, stream failures, response completion, and disconnected clients.
+Measurements include the request phase, HTTP status, attempt, duration, and byte
+count where available. A browser handoff or completed server response does **not**
+prove that a file was saved to disk.
+
+Browsers submit small batches to `POST /packageJobDiagnostics?id=...`, using the
+same owner bearer token as status/download requests. The server accepts only fixed
+event names, enums, booleans, and bounded numeric fields; it rejects free text,
+URLs, and extra fields. No signing inputs, owner tokens, package URLs, exception
+messages, or stacks are recorded. Browser events are client-reported observations,
+not authoritative job state. Existing automatic and manual download retries are
+unchanged.
+
+Delivery logs use a separate Redis list, `package-delivery:<supportReference>`,
+atomically trimmed to the newest 100 entries with a 14-day TTL, so worker snapshot
+updates cannot overwrite them. The support API sanitizes these entries again and
+only reads them after validating the parent diagnostics record. They do not change
+the build status or extend owner access. Server console events also include
+`supportReference` for environments with console trace collection enabled.
+
+Reporting is best-effort and never blocks packaging: each page queues at most 60
+events, uses five-second submission timeouts and keepalive requests, and retains
+failed batches in memory for the next event (including going online). Diagnostics
+retain their initially resolved CloudAPK destination, while actual packaging
+operations continue resolving fresh slot configuration. A closed/crashed browser,
+lost network, missing/expired owner credential, or unavailable configuration may
+prevent delivery; absence of a client event is not proof it did not occur. No new
+telemetry SDK, deployment setting, or production logging configuration is required.
+
 The admin dashboard pages analyses and packages independently using Previous/Next
 controls, with up to 50 failures per page within a fixed 14-day window. Package
 history is limited to the latest 500 indexed failures. Summaries show the first

@@ -1,6 +1,6 @@
 import { registerHooks } from 'node:module';
 
-export const effects = { builds: 0, enqueued: [], stored: new Map(), expirations: new Map(), downloads: 0 };
+export const effects = { builds: 0, enqueued: [], stored: new Map(), expirations: new Map(), downloads: 0, diagnosticLogs: new Map(), downloadFailure: null, diagnosticFailure: false };
 const effectKey = Symbol.for('cloudapk-route-test-effects');
 globalThis[effectKey] = effects;
 
@@ -33,7 +33,12 @@ const sources = new Map(Object.entries({
                 effects.stored.set(key, JSON.parse(JSON.stringify(value)));
                 effects.expirations.set(key, ttl);
             },
-            async indexDiagnosticFailure() {}
+            async indexDiagnosticFailure() {},
+            async appendPackageDiagnostic(reference, line) {
+                if (effects.diagnosticFailure) throw new Error('Synthetic diagnostic storage failure');
+                const logs = effects.diagnosticLogs.get(reference) ?? [];
+                effects.diagnosticLogs.set(reference, [...logs, line].slice(-100));
+            }
         };`,
     'azureStorageBlobService.js': `
         import { Readable } from 'node:stream';
@@ -42,6 +47,40 @@ const sources = new Map(Object.entries({
             async uploadFile() { return 'private-artifact.zip'; },
             async downloadFileStream() {
                 effects.downloads++;
+                if (effects.downloadFailure === 'open') {
+                    throw Object.assign(new Error('private-artifact.zip?secret=do-not-log'), { code: 'BlobNotFound', statusCode: 404 });
+                }
+                if (effects.downloadFailure === 'stream') {
+                    return Readable.from((async function* () {
+                        throw new Error('private stream failure');
+                    })());
+                }
+                if (effects.downloadFailure === 'partial') {
+                    return Readable.from((async function* () {
+                        yield 'part';
+                        await new Promise(resolve => setTimeout(resolve, 10));
+                        throw new Error('private partial stream failure');
+                    })());
+                }
+                if (effects.downloadFailure === 'delayed') {
+                    effects.onDownloadOpened?.();
+                    await effects.downloadGate;
+                }
+                if (effects.downloadFailure === 'aborted' || effects.downloadFailure === 'delayed') {
+                    let sent = false;
+                    return new Readable({
+                        read() {
+                            if (!sent) {
+                                sent = true;
+                                this.push('part');
+                            }
+                        },
+                        destroy(error, callback) {
+                            effects.onDownloadClosed?.();
+                            callback(error);
+                        }
+                    });
+                }
                 return Readable.from(['test zip']);
             }
         };`,

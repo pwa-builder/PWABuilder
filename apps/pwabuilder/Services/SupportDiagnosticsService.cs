@@ -26,7 +26,17 @@ public sealed class SupportDiagnosticsService
             return null;
         }
         var data = await cache.GetPackageDiagnosticsAsync(supportReference);
-        return ProjectPackage(data, supportReference, DateTimeOffset.UtcNow, includeDetails);
+        var package = ProjectPackage(data, supportReference, DateTimeOffset.UtcNow, includeDetails);
+        if (package is null || !includeDetails)
+        {
+            return package;
+        }
+        var deliveryLogs = await cache.GetPackageDeliveryLogsAsync(supportReference);
+        return package with
+        {
+            Logs = package.Logs.Concat(SupportDiagnosticSanitizer.SanitizeEntries(deliveryLogs, SupportDiagnosticSanitizer.MaximumLogs))
+                .TakeLast(SupportDiagnosticSanitizer.MaximumLogs).ToArray()
+        };
     }
 
     /// <summary>Reads at most fifty failures from the bounded time-window index; no Redis key scanning.</summary>

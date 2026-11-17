@@ -38,6 +38,22 @@ test("enqueue, status and download separate owner credentials from public suppor
             assert.equal(response.headers.get("cache-control"), "no-store");
         }
         const auth = { Authorization: `Bearer ${receipt.accessToken}` };
+        const diagnosticsUrl = `${origin}/packageJobDiagnostics?id=${encodeURIComponent(receipt.id)}`;
+        const diagnosticsRequest = (events, headers = auth) => fetch(diagnosticsUrl, {
+            method: "POST", headers: { ...headers, "Content-Type": "application/json" },
+            body: JSON.stringify(events)
+        });
+        const event = { event: "poll-failed", phase: "request", errorName: "TypeError", online: false, visibility: "hidden", elapsedMs: 5000 };
+        assert.equal((await diagnosticsRequest([event], {})).status, 403);
+        assert.equal((await diagnosticsRequest([event])).status, 204);
+        assert.equal((await diagnosticsRequest([{ ...event, message: "private-key-password" }])).status, 400);
+        assert.equal((await diagnosticsRequest([{ ...event, event: "private-key-password" }])).status, 400);
+        assert.equal((await diagnosticsRequest([{ ...event, status: -1 }])).status, 400);
+        assert.equal((await diagnosticsRequest([{ ...event, constructor: "private-key-password" }])).status, 400);
+        assert.equal((await diagnosticsRequest(Array(21).fill(event))).status, 400);
+        assert.ok(effects.diagnosticLogs.get(receipt.supportReference).some(line =>
+            line.includes("poll-failed") && line.includes("online=false") && line.includes("TypeError")));
+        assert.ok(!JSON.stringify([...effects.diagnosticLogs]).includes("private-key-password"));
         const status = await fetch(jobUrl, { headers: auth });
         assert.equal(status.status, 200);
         const publicJob = await status.json();
@@ -58,8 +74,76 @@ test("enqueue, status and download separate owner credentials from public suppor
         assert.equal(await download.text(), "test zip");
         assert.equal(download.headers.get("cache-control"), "no-store");
         assert.equal(effects.downloads, 1);
+        await new Promise(resolve => setImmediate(resolve));
+        const downloadLogs = effects.diagnosticLogs.get(receipt.supportReference);
+        assert.ok(downloadLogs.some(line => line.includes("server-download-started")));
+        assert.ok(downloadLogs.some(line => line.includes("server-download-finished") && line.includes("bytes=8")));
+        for (const failure of ["open", "stream"]) {
+            effects.downloadFailure = failure;
+            const failedDownload = await fetch(zipUrl, { headers: auth });
+            assert.equal(failedDownload.status, 500);
+            await failedDownload.text();
+        }
+        effects.downloadFailure = null;
+        effects.downloadFailure = "partial";
+        const partial = await fetch(zipUrl, { headers: auth });
+        assert.equal(partial.status, 200);
+        await assert.rejects(() => partial.text());
+        effects.downloadFailure = null;
+        const failureLogs = effects.diagnosticLogs.get(receipt.supportReference);
+        assert.ok(failureLogs.some(line => line.includes("server-download-failed") && line.includes("BlobNotFound") && line.includes("status=404")));
+        assert.ok(failureLogs.some(line => line.includes("server-download-failed") && line.includes("phase=stream")));
+        assert.ok(!JSON.stringify(failureLogs).includes("private-artifact"));
+        assert.ok(!JSON.stringify(failureLogs).includes("private stream failure"));
+        assert.ok(failureLogs.some(line => line.includes("server-download-failed") && line.includes("bytes=4")));
+        effects.downloadFailure = "aborted";
+        const closed = new Promise(resolve => { effects.onDownloadClosed = resolve; });
+        const abandoned = await fetch(zipUrl, { headers: auth });
+        const reader = abandoned.body.getReader();
+        await reader.read();
+        await reader.cancel();
+        await closed;
+        assert.ok(effects.diagnosticLogs.get(receipt.supportReference)
+            .some(line => line.includes("server-download-aborted") && line.includes("bytes=4")));
+        effects.onDownloadClosed = null;
+        effects.downloadFailure = null;
+        const abortCount = () => effects.diagnosticLogs.get(receipt.supportReference)
+            .filter(line => line.includes("server-download-aborted")).length;
+        const previousAborts = abortCount();
+        effects.downloadFailure = "delayed";
+        const opening = new Promise(resolve => { effects.onDownloadOpened = resolve; });
+        let releaseDownload;
+        effects.downloadGate = new Promise(resolve => { releaseDownload = resolve; });
+        let lateStreamDestroyed = false;
+        effects.onDownloadClosed = () => { lateStreamDestroyed = true; };
+        const responseClosed = new Promise(resolve => {
+            server.once("request", (_request, response) => response.once("close", resolve));
+        });
+        const cancellation = new AbortController();
+        const pendingDownload = fetch(zipUrl, { headers: auth, signal: cancellation.signal });
+        try {
+            await opening;
+            cancellation.abort();
+            await assert.rejects(pendingDownload, error => error.name === "AbortError");
+            await responseClosed;
+            releaseDownload();
+            await new Promise(resolve => setImmediate(resolve));
+            assert.equal(abortCount(), previousAborts + 1);
+            assert.equal(lateStreamDestroyed, true);
+        } finally {
+            releaseDownload();
+            effects.onDownloadOpened = null;
+            effects.onDownloadClosed = null;
+            effects.downloadFailure = null;
+        }
+        effects.diagnosticFailure = true;
+        assert.equal((await diagnosticsRequest([event])).status, 503);
+        const unloggedDownload = await fetch(zipUrl, { headers: auth });
+        assert.equal(await unloggedDownload.text(), "test zip");
+        effects.diagnosticFailure = false;
         effects.stored.get(`package-owner:${receipt.id}`).expiresAt = Date.now() - 1;
         assert.equal((await fetch(zipUrl, { headers: auth })).status, 403);
+        assert.equal((await diagnosticsRequest([event])).status, 403);
 
         effects.stored.set("googleplaypackagejob:legacy:123", { packageOptions: { signing: { keyPassword: "legacy-secret" } } });
         const legacy = await fetch(`${origin}/getPackageJob?id=googleplaypackagejob:legacy:123`, { headers: auth });

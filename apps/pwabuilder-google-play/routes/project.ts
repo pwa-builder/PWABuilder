@@ -13,10 +13,11 @@ import { StoredPackageJob } from "../utils/package-job-diagnostics.js";
 import { canAccessPackageJob, PackageJobAccess } from "../utils/package-job-access.js";
 import { blobStorage } from "../services/azureStorageBlobService.js";
 import { validateAndroidOptionsRequest } from '../utils/android-options-validation.js';
+import { deliveryErrorDetails, isBrowserDeliveryEvent, recordDeliveryEvent } from '../utils/package-delivery-diagnostics.js';
 
 const router = express.Router();
 
-router.use(["/enqueuePackageJob", "/getPackageJob", "/downloadPackageZip", "/generateAppPackage", "/generateApkZip"], (_request, response, next) => {
+router.use(["/enqueuePackageJob", "/getPackageJob", "/downloadPackageZip", "/packageJobDiagnostics", "/generateAppPackage", "/generateApkZip"], (_request, response, next) => {
     response.setHeader("Cache-Control", "no-store");
     response.setHeader("Referrer-Policy", "no-referrer");
     next();
@@ -96,6 +97,23 @@ router.get("/getPackageJob", async (request, response) => await getPackageJob(re
  */
 router.get("/downloadPackageZip", async (request, response) => await downloadPackageZip(request, response));
 
+router.post("/packageJobDiagnostics", async (request, response) => {
+    const job = await getOwnedPackageJob(request, response);
+    if (!job) return;
+    const events: unknown = request.body;
+    if (!Array.isArray(events) || events.length < 1 || events.length > 20 || !events.every(isBrowserDeliveryEvent)) {
+        response.status(400).send("Invalid package delivery diagnostics.");
+        return;
+    }
+    for (const event of events) {
+        if (!await recordDeliveryEvent(job.supportReference, "browser", event.event, event)) {
+            response.status(503).send("Unable to save package delivery diagnostics.");
+            return;
+        }
+    }
+    response.sendStatus(204);
+});
+
 /**
  * This endpoint tries to fetch a URL. This is useful because we occasionally have bug reports
  * where the Android packaging service can't fetch an image or other resource.
@@ -168,13 +186,57 @@ async function downloadPackageZip(request: express.Request, response: express.Re
         return;
     }
 
-    // Download it from Azure storage.
-    const downloadStream = await blobStorage.downloadFileStream(job.uploadedBlobFileName);
+    const started = Date.now();
+    const report = (event: string, details = {}) =>
+        recordDeliveryEvent(job.supportReference, "server", event, { durationMs: Date.now() - started, ...details });
+    void report("server-download-started");
+    let downloadStream: NodeJS.ReadableStream | undefined;
+    let bytes = 0;
+    let failed = false;
+    let aborted = false;
+    const closeDownload = () => {
+        if (response.writableFinished) return;
+        if (!failed && !aborted) void report("server-download-aborted", { bytes });
+        aborted = true;
+        if (downloadStream) {
+            downloadStream.unpipe(response);
+            if ("destroy" in downloadStream && typeof downloadStream.destroy === "function") {
+                downloadStream.destroy();
+            }
+        }
+    };
+    response.once("close", closeDownload);
+    if (response.destroyed) {
+        closeDownload();
+        return;
+    }
+    try {
+        downloadStream = await blobStorage.downloadFileStream(job.uploadedBlobFileName);
+    } catch (error) {
+        failed = true;
+        void report("server-download-failed", { phase: "request", ...deliveryErrorDetails(error) });
+        if (!response.destroyed) response.status(500).send("Unable to retrieve the package ZIP.");
+        return;
+    }
     downloadStream.on('error', (err) => {
-        console.error("Download zip file failed due to stream error:", err);
+        if (aborted) return;
+        failed = true;
+        void report("server-download-failed", { phase: "stream", bytes, ...deliveryErrorDetails(err) });
         if (!response.headersSent) {
             response.status(500).send("Download failed due to a stream error.");
+        } else {
+            response.destroy();
         }
+    });
+    if (response.destroyed) {
+        closeDownload();
+        return;
+    }
+    downloadStream.on("data", (chunk: Buffer | string) => {
+        bytes += typeof chunk === "string" ? Buffer.byteLength(chunk) : chunk.length;
+    });
+    response.once("finish", () => {
+        if (!failed) void report("server-download-finished", { bytes, status: response.statusCode });
     });
 
     // Send back the zip.
