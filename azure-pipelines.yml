@@ -18,12 +18,6 @@ parameters:
 variables:
   - name: armServiceConnection
     value: Arm-PWA-Builder-Connection
-  # Approved Azure Artifacts feed that upstreams to Central Feed Services. This is the feed the
-  # Store Web repos already use (e.g. SFC.Client.RnRModerator); confirm it with the Universal Store feed owners.
-  - name: cfsNuGetSource
-    value: https://pkgs.dev.azure.com/microsoft/universal%20store/_packaging/universal_store_PublicPackages/nuget/v3/index.json
-  - name: cfsNpmRegistry
-    value: https://pkgs.dev.azure.com/microsoft/universal%20store/_packaging/universal_store_PublicPackages/npm/registry/
   - name: expectedSubscriptionId
     value: fd642677-2fa9-4d8a-8b25-788656871b24
 
@@ -80,7 +74,16 @@ extends:
                       throw 'A working Linux Docker daemon is required.'
                   }
                   if ([string]::IsNullOrWhiteSpace($env:SYSTEM_ACCESSTOKEN)) {
-                      throw 'System.AccessToken is required to restore packages from the approved Azure Artifacts feed.'
+                      throw 'System.AccessToken is required to restore packages from the configured package feed.'
+                  }
+                  # The feed URLs are pipeline variables defined in Azure DevOps, not in this repository.
+                  foreach ($feed in @(
+                      @{ Variable = 'nugetFeedUrl'; Value = $env:NUGET_FEED_URL },
+                      @{ Variable = 'npmRegistryUrl'; Value = $env:NPM_REGISTRY_URL })) {
+                      if ([string]::IsNullOrWhiteSpace($feed.Value) -or $feed.Value.StartsWith('$(') -or
+                          $feed.Value -cnotmatch '^https://\S+$') {
+                          throw "Define the pipeline variable '$($feed.Variable)' in Azure DevOps (Edit pipeline > Variables) as an https URL."
+                      }
                   }
                   # Per-run feed config handed to BuildKit as secrets: never written into an image layer
                   # or the repository, and deleted when the build ends.
@@ -88,24 +91,24 @@ extends:
                   New-Item -ItemType Directory -Path $secrets | Out-Null
                   try {
                       $token = [System.Security.SecurityElement]::Escape($env:SYSTEM_ACCESSTOKEN)
-                      $nugetSource = [System.Security.SecurityElement]::Escape($env:CFS_NUGET_SOURCE)
+                      $nugetSource = [System.Security.SecurityElement]::Escape($env:NUGET_FEED_URL)
                       $nugetConfig = Join-Path $secrets 'nuget.config'
                       @"
                   <?xml version="1.0" encoding="utf-8"?>
                   <configuration>
                     <packageSources>
                       <clear />
-                      <add key="CFS" value="$nugetSource" />
+                      <add key="Feed" value="$nugetSource" />
                     </packageSources>
                     <packageSourceCredentials>
-                      <CFS>
+                      <Feed>
                         <add key="Username" value="build" />
                         <add key="ClearTextPassword" value="$token" />
-                      </CFS>
+                      </Feed>
                     </packageSourceCredentials>
                   </configuration>
                   "@ | Set-Content -LiteralPath $nugetConfig -Encoding utf8NoBOM
-                      $npmRegistry = $env:CFS_NPM_REGISTRY
+                      $npmRegistry = $env:NPM_REGISTRY_URL
                       $npmScope = $npmRegistry -replace '^https?:', ''
                       $npmrc = Join-Path $secrets '.npmrc'
                       "registry=$npmRegistry`nalways-auth=true`n${npmScope}:_authToken=$env:SYSTEM_ACCESSTOKEN`n" |
@@ -126,8 +129,8 @@ extends:
                 workingDirectory: $(Build.SourcesDirectory)
                 env:
                   SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-                  CFS_NUGET_SOURCE: ${{ variables.cfsNuGetSource }}
-                  CFS_NPM_REGISTRY: ${{ variables.cfsNpmRegistry }}
+                  NUGET_FEED_URL: $(nugetFeedUrl)
+                  NPM_REGISTRY_URL: $(npmRegistryUrl)
 
               - ${{ if ne(parameters.action, 'BuildOnly') }}:
                   - task: AzureCLI@2
