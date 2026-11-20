@@ -26,6 +26,7 @@ import generatePassword from 'password-generator';
 import { PackageCreationProgress } from "../models/packageCreationProgress.js";
 import EventEmitter from "events";
 import { validateAndroidOptionsRequest } from '../utils/android-options-validation.js';
+import Color from 'colorjs.io';
 
 /*
  * Wraps Google's bubblewrap to build a signed APK from a PWA.
@@ -352,13 +353,13 @@ export class BubbleWrapper {
             startUrl: pwaSettings.startUrl,
             display: pwaSettings.display,
             orientation: pwaSettings.orientation,
-            themeColor: pwaSettings.themeColor,
-            themeColorDark: pwaSettings.themeColorDark,
-            backgroundColor: pwaSettings.backgroundColor,
-            navigationColor: pwaSettings.navigationColor,
-            navigationColorDark: pwaSettings.navigationColorDark,
-            navigationDividerColor: pwaSettings.navigationDividerColor,
-            navigationDividerColorDark: pwaSettings.navigationDividerColorDark,
+            themeColor: this.normalizeColor(pwaSettings.themeColor),
+            themeColorDark: this.normalizeColor(pwaSettings.themeColorDark),
+            backgroundColor: this.normalizeColor(pwaSettings.backgroundColor),
+            navigationColor: this.normalizeColor(pwaSettings.navigationColor),
+            navigationColorDark: this.normalizeColor(pwaSettings.navigationColorDark),
+            navigationDividerColor: this.normalizeColor(pwaSettings.navigationDividerColor),
+            navigationDividerColorDark: this.normalizeColor(pwaSettings.navigationDividerColorDark),
             iconUrl: pwaSettings.iconUrl,
             maskableIconUrl: pwaSettings.maskableIconUrl,
             monochromeIconUrl: pwaSettings.monochromeIconUrl,
@@ -391,6 +392,16 @@ export class BubbleWrapper {
         const twaManifest = new TwaManifest(manifestJson);
         console.info('TWA manifest created', twaManifest);
         return twaManifest;
+    }
+
+    private normalizeColor(color: string): string;
+    private normalizeColor(color: string | undefined): string | undefined;
+    private normalizeColor(color: string | undefined): string | undefined {
+        // Color.js maps modern CSS colors to sRGB; comma-separated RGBA preserves alpha
+        // while remaining compatible with Bubblewrap's older color parser.
+        return color === undefined
+            ? undefined
+            : new Color(color).to('srgb').toString({ format: 'rgba', precision: 15 });
     }
 
     private createShortcuts(

@@ -4,6 +4,12 @@ This is PWABuilder's Google Play platform that generates a Google Play-ready app
 
 We utilize [Google's Bubblewrap](https://github.com/googlechromelabs/bubblewrap) to generate and sign an Android app package.
 
+Manifest and packaging colors (including OKLCH, Lab, and `color()` syntax) are
+converted with Color.js to sRGB before reaching Bubblewrap's legacy color parser.
+Colors outside sRGB are gamut-mapped; alpha is retained and omitted optional
+colors keep Bubblewrap's defaults. Invalid or context-dependent values such as
+`var(--brand)` and `currentColor` still fail rather than silently changing colors.
+
 This tool generates a zip file containing both an `.apk` file (for testing) and an `.aab` file (for submission to Google Play Store).
 
 The minimum Android SDK defaults to API level 24 (Android 7.0), including for Meta Quest packages, to meet [Google Play automatic protection requirements](https://support.google.com/googleplay/android-developer/answer/10183279). API callers can explicitly supply `minSdkVersion`; values below 24 are not compatible with automatic protection.
