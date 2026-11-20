@@ -39,6 +39,15 @@ ENV ASPNETCORE_ENVIRONMENT=Production
 # Use the SDK image to build the application
 FROM mcr.microsoft.com/dotnet/sdk:10.0.404 AS build
 
+# Optional apt mirror for build environments that cannot reach archive.ubuntu.com, for example
+# --build-arg UBUNTU_MIRROR_HOST=azure.archive.ubuntu.com. Leave it empty to use the default sources.
+ARG UBUNTU_MIRROR_HOST=
+RUN if [ -n "$UBUNTU_MIRROR_HOST" ]; then \
+      for f in /etc/apt/sources.list /etc/apt/sources.list.d/*.sources /etc/apt/sources.list.d/*.list; do \
+        if [ -f "$f" ]; then sed -i "s#//archive.ubuntu.com#//${UBUNTU_MIRROR_HOST}#g" "$f"; fi; \
+      done; \
+    fi
+
 # Install Node.js in build stage
 RUN curl -fsSL https://deb.nodesource.com/setup_26.x | bash - \
     && apt-get install -y nodejs=26.13.1-1nodesource1
@@ -49,20 +58,29 @@ WORKDIR /src
 COPY ["apps/pwabuilder/PWABuilder.csproj", "apps/pwabuilder/"]
 COPY ["libraries/", "libraries/"]
 
+# Optional BuildKit secrets, supplied by the Azure Pipelines build so restores use a configured package
+# feed without committing feed URLs or credentials. Without them, the public registries are used.
+#   nugetconfig: a NuGet.config; npmrc: an .npmrc
 # Restore dependencies
-RUN dotnet restore "apps/pwabuilder/PWABuilder.csproj"
+RUN --mount=type=secret,id=nugetconfig \
+    if [ -f /run/secrets/nugetconfig ]; then CFG="--configfile /run/secrets/nugetconfig"; else CFG=""; fi; \
+    dotnet restore "apps/pwabuilder/PWABuilder.csproj" $CFG
 
 # Copy the rest of the application code
 COPY . .
 
 # Build frontend
 WORKDIR /src/apps/pwabuilder/Frontend
-RUN npm install
+RUN --mount=type=secret,id=npmrc \
+    if [ -f /run/secrets/npmrc ]; then export NPM_CONFIG_USERCONFIG=/run/secrets/npmrc NPM_CONFIG_AUDIT=false NPM_CONFIG_FUND=false; fi; \
+    npm install
 RUN npm run build
 
 # Build Lighthouse scripts
 WORKDIR /src/apps/pwabuilder/node-scripts
-RUN npm ci
+RUN --mount=type=secret,id=npmrc \
+    if [ -f /run/secrets/npmrc ]; then export NPM_CONFIG_USERCONFIG=/run/secrets/npmrc NPM_CONFIG_AUDIT=false NPM_CONFIG_FUND=false; fi; \
+    npm ci
 RUN npm run build
 RUN npm prune --omit=dev --ignore-scripts \
     && rm -rf node_modules/typescript node_modules/@typescript \
@@ -71,15 +89,32 @@ RUN npm prune --omit=dev --ignore-scripts \
     && test ! -e node_modules/@typescript \
     && test ! -e node_modules/.bin/tsc
 
-# Build backend
+# Build backend. PWABuilder.csproj re-runs npm install/build in Frontend during a Release build,
+# so these steps need both secrets.
 WORKDIR /src/apps/pwabuilder
-RUN dotnet build "PWABuilder.csproj" -c Release -o /app/build
+RUN --mount=type=secret,id=nugetconfig \
+    --mount=type=secret,id=npmrc \
+    if [ -f /run/secrets/npmrc ]; then export NPM_CONFIG_USERCONFIG=/run/secrets/npmrc NPM_CONFIG_AUDIT=false NPM_CONFIG_FUND=false; fi; \
+    if [ -f /run/secrets/nugetconfig ]; then CFG="-p:RestoreConfigFile=/run/secrets/nugetconfig"; else CFG=""; fi; \
+    dotnet build "PWABuilder.csproj" -c Release -o /app/build $CFG
 
 FROM build AS publish
-RUN dotnet publish "PWABuilder.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN --mount=type=secret,id=nugetconfig \
+    --mount=type=secret,id=npmrc \
+    if [ -f /run/secrets/npmrc ]; then export NPM_CONFIG_USERCONFIG=/run/secrets/npmrc NPM_CONFIG_AUDIT=false NPM_CONFIG_FUND=false; fi; \
+    if [ -f /run/secrets/nugetconfig ]; then CFG="-p:RestoreConfigFile=/run/secrets/nugetconfig"; else CFG=""; fi; \
+    dotnet publish "PWABuilder.csproj" -c Release -o /app/publish /p:UseAppHost=false $CFG
 
 # Final stage/image
 FROM mcr.microsoft.com/dotnet/aspnet:10.0.15 AS final
+
+# See the build stage: optional apt mirror for pipelines that block archive.ubuntu.com.
+ARG UBUNTU_MIRROR_HOST=
+RUN if [ -n "$UBUNTU_MIRROR_HOST" ]; then \
+      for f in /etc/apt/sources.list /etc/apt/sources.list.d/*.sources /etc/apt/sources.list.d/*.list; do \
+        if [ -f "$f" ]; then sed -i "s#//archive.ubuntu.com#//${UBUNTU_MIRROR_HOST}#g" "$f"; fi; \
+      done; \
+    fi
 
 # Chrome for Testing: please review all the latest versions here:
 # https://googlechromelabs.github.io/chrome-for-testing/

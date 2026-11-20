@@ -73,12 +73,64 @@ extends:
                   if ($LASTEXITCODE -ne 0 -or $dockerOs -cne 'linux') {
                       throw 'A working Linux Docker daemon is required.'
                   }
-                  & docker build --pull --no-cache --file Dockerfile.production --tag $tag --memory 4GB .
-                  if ($LASTEXITCODE -ne 0) { throw 'Docker build failed.' }
+                  if ([string]::IsNullOrWhiteSpace($env:SYSTEM_ACCESSTOKEN)) {
+                      throw 'System.AccessToken is required to restore packages from the configured package feed.'
+                  }
+                  # The feed URLs are pipeline variables defined in Azure DevOps, not in this repository.
+                  foreach ($feed in @(
+                      @{ Variable = 'nugetFeedUrl'; Value = $env:NUGET_FEED_URL },
+                      @{ Variable = 'npmRegistryUrl'; Value = $env:NPM_REGISTRY_URL })) {
+                      if ([string]::IsNullOrWhiteSpace($feed.Value) -or $feed.Value.StartsWith('$(') -or
+                          $feed.Value -cnotmatch '^https://\S+$') {
+                          throw "Define the pipeline variable '$($feed.Variable)' in Azure DevOps (Edit pipeline > Variables) as an https URL."
+                      }
+                  }
+                  # Per-run feed config handed to BuildKit as secrets: never written into an image layer
+                  # or the repository, and deleted when the build ends.
+                  $secrets = Join-Path $env:AGENT_TEMPDIRECTORY ('pwabuilder-docker-secrets-' + [guid]::NewGuid().ToString('N'))
+                  New-Item -ItemType Directory -Path $secrets | Out-Null
+                  try {
+                      $token = [System.Security.SecurityElement]::Escape($env:SYSTEM_ACCESSTOKEN)
+                      $nugetSource = [System.Security.SecurityElement]::Escape($env:NUGET_FEED_URL)
+                      $nugetConfig = Join-Path $secrets 'nuget.config'
+                      @"
+                  <?xml version="1.0" encoding="utf-8"?>
+                  <configuration>
+                    <packageSources>
+                      <clear />
+                      <add key="Feed" value="$nugetSource" />
+                    </packageSources>
+                    <packageSourceCredentials>
+                      <Feed>
+                        <add key="Username" value="build" />
+                        <add key="ClearTextPassword" value="$token" />
+                      </Feed>
+                    </packageSourceCredentials>
+                  </configuration>
+                  "@ | Set-Content -LiteralPath $nugetConfig -Encoding utf8NoBOM
+                      $npmRegistry = $env:NPM_REGISTRY_URL
+                      $npmScope = $npmRegistry -replace '^https?:', ''
+                      $npmrc = Join-Path $secrets '.npmrc'
+                      "registry=$npmRegistry`nalways-auth=true`n${npmScope}:_authToken=$env:SYSTEM_ACCESSTOKEN`n" |
+                          Set-Content -LiteralPath $npmrc -Encoding utf8NoBOM -NoNewline
+                      if (-not $IsWindows) { & chmod 600 $nugetConfig $npmrc }
+                      $env:DOCKER_BUILDKIT = '1'
+                      & docker build --pull --no-cache --file Dockerfile.production --tag $tag --memory 4GB `
+                          --build-arg UBUNTU_MIRROR_HOST=azure.archive.ubuntu.com `
+                          --secret "id=nugetconfig,src=$nugetConfig" `
+                          --secret "id=npmrc,src=$npmrc" .
+                      if ($LASTEXITCODE -ne 0) { throw 'Docker build failed.' }
+                  } finally {
+                      Remove-Item -LiteralPath $secrets -Recurse -Force
+                  }
                   Write-Host "##vso[task.setvariable variable=BuiltImageTag]$tag"
                   Write-Host "Built $tag"
                 displayName: Validate trusted source and build
                 workingDirectory: $(Build.SourcesDirectory)
+                env:
+                  SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+                  NUGET_FEED_URL: $(nugetFeedUrl)
+                  NPM_REGISTRY_URL: $(npmRegistryUrl)
 
               - ${{ if ne(parameters.action, 'BuildOnly') }}:
                   - task: AzureCLI@2
