@@ -17,7 +17,7 @@ parameters:
 
 variables:
   - name: armServiceConnection
-    value: Arm-PWA-Builder-Connection
+    value: Arm-PWA-Builder-Deploy
   - name: expectedSubscriptionId
     value: fd642677-2fa9-4d8a-8b25-788656871b24
 
