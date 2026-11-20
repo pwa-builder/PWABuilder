@@ -26,23 +26,23 @@
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <subviews>
                                             <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DIO-mU-n27" userLabel="Loading View">
-                                                <rect key="frame" x="95" y="322" width="200" height="200"/>
+                                                <rect key="frame" x="{{PWABuilder.iOS.loadingViewX}}" y="{{PWABuilder.iOS.loadingViewY}}" width="{{PWABuilder.iOS.loadingViewWidth}}" height="{{PWABuilder.iOS.loadingViewHeight}}"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                                 <subviews>
                                                     <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="LaunchIcon" translatesAutoresizingMaskIntoConstraints="NO" id="4oa-LZ-pgs">
-                                                        <rect key="frame" x="68" y="68" width="64" height="64"/>
+                                                        <rect key="frame" x="{{PWABuilder.iOS.loadingIconX}}" y="68" width="{{PWABuilder.iOS.splashIconSize}}" height="{{PWABuilder.iOS.splashIconSize}}"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                                         <color key="tintColor" systemColor="secondarySystemFillColor"/>
                                                         <rect key="contentStretch" x="0.0" y="0.0" width="0.0" height="0.0"/>
                                                     </imageView>
                                                     <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.10000000000000001" id="xSD-dq-HF9">
-                                                        <rect key="frame" x="50" y="146" width="100" height="15"/>
+                                                        <rect key="frame" x="{{PWABuilder.iOS.loadingProgressX}}" y="{{PWABuilder.iOS.loadingProgressY}}" width="100" height="15"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                                         <color key="backgroundColor" systemColor="secondarySystemFillColor"/>
                                                         {{PWABuilder.iOS.progressBarColor}}
                                                     </progressView>
                                                     <imageView hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="wifi.slash" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="TpV-I7-c6z">
-                                                        <rect key="frame" x="85" y="159.33333333333314" width="31.999999999999886" height="30.000000000000085"/>
+                                                        <rect key="frame" x="{{PWABuilder.iOS.loadingOfflineIconX}}" y="{{PWABuilder.iOS.loadingOfflineIconY}}" width="32" height="30"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                         <color key="tintColor" systemColor="secondaryLabelColor"/>
                                                     </imageView>
@@ -71,7 +71,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="LaunchIcon" width="64" height="64"/>
+        <image name="LaunchIcon" width="{{PWABuilder.iOS.splashIconSize}}" height="{{PWABuilder.iOS.splashIconSize}}"/>
         <image name="wifi.slash" catalog="system" width="128" height="102"/>
         <systemColor name="secondaryLabelColor">
             <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>

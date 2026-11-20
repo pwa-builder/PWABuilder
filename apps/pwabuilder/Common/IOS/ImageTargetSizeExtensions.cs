@@ -114,6 +114,7 @@ namespace PWABuilder.IOS.Common
                 ImageTargetSize.Size192x192 => true,
                 ImageTargetSize.Size256x256 => true,
                 ImageTargetSize.Size512x512 => true,
+                ImageTargetSize.Size1024x1024 => true, // covers the largest splash icon (256 points) on 3x screens
                 _ => false,
             };
         }
