@@ -1,28 +1,233 @@
-# Node.js
-# Build a general Node.js project with npm.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+# Save at the PWABuilder repository root. Pools match SFC.Client.Web/pipelines/localization.yml.
+# Keep StartRight-required SDL, TSA, image-scanning, and release checks enabled.
+name: pwabuilder-preview-$(Date:yyyyMMdd).$(Rev:r)
 
-trigger:
-- main
+trigger: none
+pr: none
 
-pool:
-  vmImage: ubuntu-latest
+parameters:
+  - name: action
+    displayName: Action
+    type: string
+    default: BuildOnly
+    values:
+      - BuildOnly
+      - PushImage
+      - DeployPreview
 
-steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '14.x'
-  displayName: 'Install Node.js'
+variables:
+  - name: armServiceConnection
+    value: Arm-PWA-Builder-Connection
+  - name: expectedSubscriptionId
+    value: fd642677-2fa9-4d8a-8b25-788656871b24
 
-- script: |
-    cd apps/pwabuilder
-    npm install
-    npm run build
-  displayName: 'npm install and build'
+resources:
+  repositories:
+    - repository: 1esPipelines
+      type: git
+      name: 1ESPipelineTemplates/1ESPipelineTemplates
+      ref: refs/tags/release
 
-- task: ComponentGovernanceComponentDetection@0
-  inputs:
-    scanType: 'Register'
-    verbosity: 'Verbose'
-    alertWarningLevel: 'High'
+extends:
+  template: v1/1ES.Official.PipelineTemplate.yml@1esPipelines
+  parameters:
+    pool:
+      name: Azure-Pipelines-1ESPT-ExDShared
+      image: ubuntu-latest
+      os: linux
+    sdl:
+      sourceAnalysisPool:
+        name: Azure-Pipelines-1ESPT-ExDShared
+        image: windows-latest
+        os: windows
+    stages:
+      - stage: Build
+        displayName: Build web image
+        lockBehavior: sequential
+        jobs:
+          - job: BuildImage
+            timeoutInMinutes: 120
+            steps:
+              - checkout: self
+                clean: true
+                persistCredentials: false
+                fetchDepth: 1
+                fetchTags: false
+
+              - pwsh: |
+                  $ErrorActionPreference = 'Stop'
+                  if ($env:BUILD_SOURCEBRANCH -cne 'refs/heads/main' -or
+                      $env:BUILD_REASON -cne 'Manual' -or
+                      $env:BUILD_REPOSITORY_NAME -cne 'pwa-builder/PWABuilder') {
+                      throw 'Only manually queued builds of pwa-builder/PWABuilder main are supported.'
+                  }
+                  if ($env:BUILD_SOURCEVERSION -cnotmatch '^[0-9a-f]{40}$' -or
+                      $env:BUILD_BUILDID -notmatch '^[0-9]+$' -or
+                      $env:SYSTEM_JOBATTEMPT -notmatch '^[0-9]+$') {
+                      throw 'Missing or invalid Azure Pipelines source/build identifiers.'
+                  }
+                  $tag = "pwabuilder.azurecr.io/pwabuilder:preview-$env:BUILD_SOURCEVERSION-$env:BUILD_BUILDID-$env:SYSTEM_JOBATTEMPT"
+                  $dockerOs = & docker info --format '{{.OSType}}'
+                  if ($LASTEXITCODE -ne 0 -or $dockerOs -cne 'linux') {
+                      throw 'A working Linux Docker daemon is required.'
+                  }
+                  & docker build --pull --no-cache --file Dockerfile.production --tag $tag --memory 4GB .
+                  if ($LASTEXITCODE -ne 0) { throw 'Docker build failed.' }
+                  Write-Host "##vso[task.setvariable variable=BuiltImageTag]$tag"
+                  Write-Host "Built $tag"
+                displayName: Validate trusted source and build
+                workingDirectory: $(Build.SourcesDirectory)
+
+              - ${{ if ne(parameters.action, 'BuildOnly') }}:
+                  - task: AzureCLI@2
+                    name: PushImage
+                    displayName: Push image and capture immutable digest
+                    inputs:
+                      azureSubscription: ${{ variables.armServiceConnection }}
+                      scriptType: pscore
+                      scriptLocation: inlineScript
+                      visibleAzLogin: false
+                      addSpnToEnvironment: false
+                      useGlobalConfig: false
+                      workingDirectory: $(Build.SourcesDirectory)
+                      inlineScript: |
+                        $ErrorActionPreference = 'Stop'
+                        $subscription = & az account show --query id --output tsv --only-show-errors
+                        if ($LASTEXITCODE -ne 0 -or $subscription -ne $env:EXPECTED_SUBSCRIPTION_ID) {
+                            throw 'The ARM service connection is not using the expected PWA Builder subscription.'
+                        }
+                        if ($env:IMAGE_TAG -cnotmatch '^pwabuilder\.azurecr\.io/pwabuilder:preview-[0-9a-f]{40}-[0-9]+-[0-9]+$') {
+                            throw 'The built image tag is missing or invalid.'
+                        }
+                        $dockerConfig = Join-Path $env:AGENT_TEMPDIRECTORY ("pwabuilder-acr-" + [guid]::NewGuid().ToString('N'))
+                        New-Item -ItemType Directory -Path $dockerConfig | Out-Null
+                        $env:DOCKER_CONFIG = $dockerConfig
+                        try {
+                            & az acr login --name pwabuilder --resource-group pwabuilder-registry --only-show-errors
+                            if ($LASTEXITCODE -ne 0) { throw 'ACR login failed.' }
+                            & docker push $env:IMAGE_TAG
+                            if ($LASTEXITCODE -ne 0) { throw 'Docker push failed.' }
+                            $digestsJson = & docker image inspect --format '{{json .RepoDigests}}' $env:IMAGE_TAG
+                            if ($LASTEXITCODE -ne 0) { throw 'Could not inspect the pushed image.' }
+                            $matches = @($digestsJson | ConvertFrom-Json | Where-Object {
+                                $_ -cmatch '^pwabuilder\.azurecr\.io/pwabuilder@sha256:[0-9a-f]{64}$'
+                            })
+                            if ($matches.Count -ne 1) {
+                                throw 'Docker did not return exactly one expected immutable registry digest.'
+                            }
+                            $image = $matches[0]
+                            Write-Host "##vso[task.setvariable variable=imageReference;isOutput=true]$image"
+                            Write-Host "Pushed immutable image: $image"
+                        } finally {
+                            Remove-Item -LiteralPath $dockerConfig -Recurse -Force
+                            Remove-Item Env:DOCKER_CONFIG
+                        }
+                    env:
+                      EXPECTED_SUBSCRIPTION_ID: $(expectedSubscriptionId)
+                      IMAGE_TAG: $(BuiltImageTag)
+
+      - ${{ if eq(parameters.action, 'DeployPreview') }}:
+          - stage: Deploy
+            displayName: Deploy shared preview only
+            dependsOn: Build
+            condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.Reason'], 'Manual'))
+            lockBehavior: sequential
+            variables:
+              imageReference: $[ stageDependencies.Build.BuildImage.outputs['PushImage.imageReference'] ]
+            jobs:
+              - job: DeployPreview
+                timeoutInMinutes: 45
+                templateContext:
+                  type: releaseJob
+                  isProduction: true
+                steps:
+                  - checkout: none
+                  - task: AzureCLI@2
+                    displayName: Pin preview image, restart, and check readiness
+                    inputs:
+                      azureSubscription: ${{ variables.armServiceConnection }}
+                      scriptType: pscore
+                      scriptLocation: inlineScript
+                      visibleAzLogin: false
+                      addSpnToEnvironment: false
+                      useGlobalConfig: false
+                      inlineScript: |
+                        $ErrorActionPreference = 'Stop'
+                        if ($env:IMAGE_REFERENCE -cnotmatch '^pwabuilder\.azurecr\.io/pwabuilder@sha256:[0-9a-f]{64}$') {
+                            throw 'No valid immutable image reference was supplied by this run.'
+                        }
+                        $subscription = & az account show --query id --output tsv --only-show-errors
+                        if ($LASTEXITCODE -ne 0 -or $subscription -ne $env:EXPECTED_SUBSCRIPTION_ID) {
+                            throw 'The ARM service connection is not using the expected PWA Builder subscription.'
+                        }
+                        $slotId = "/subscriptions/$subscription/resourceGroups/pwabuilder-prod/providers/Microsoft.Web/sites/pwabuilder/slots/preview"
+                        $apiVersion = '2024-11-01'
+                        $slotUrl = "https://management.azure.com${slotId}?api-version=$apiVersion"
+                        $configUrl = "https://management.azure.com${slotId}/config/web?api-version=$apiVersion"
+                        $slotJson = & az rest --method get --url $slotUrl --output json --only-show-errors
+                        if ($LASTEXITCODE -ne 0) { throw 'Could not read the existing preview slot.' }
+                        $slot = $slotJson | ConvertFrom-Json
+                        if ($slot.properties.reserved -ne $true -or $slot.properties.state -ne 'Running') {
+                            throw 'Preview must already be an enabled, running Linux slot; this pipeline does not provision or start stopped slots.'
+                        }
+                        $hostName = [string] $slot.properties.defaultHostName
+                        if ($hostName -cnotmatch '^pwabuilder-preview(?:-[a-z0-9]+)?(?:\.[a-z0-9-]+)?\.azurewebsites\.net$') {
+                            throw 'Preview has an unexpected default hostname; review the target before deploying.'
+                        }
+                        $configJson = & az rest --method get --url $configUrl --output json --only-show-errors
+                        if ($LASTEXITCODE -ne 0) { throw 'Could not read preview configuration.' }
+                        $config = $configJson | ConvertFrom-Json
+                        if (-not [string]::IsNullOrWhiteSpace($config.properties.autoSwapSlotName)) {
+                            throw 'Preview has auto-swap configured. Disable it through an approved configuration change before using this pipeline.'
+                        }
+                        if ($config.properties.linuxFxVersion -notlike 'DOCKER|*') {
+                            throw 'Expected an existing classic Linux Docker slot; sidecar/native-runtime conversion is outside this pipeline.'
+                        }
+                        if ($config.properties.acrUseManagedIdentityCreds -ne $true) {
+                            throw 'Configure and verify preview managed-identity ACR pulls before deploying.'
+                        }
+                        Write-Host "Previous preview image: $($config.properties.linuxFxVersion)"
+                        $bodyPath = Join-Path $env:AGENT_TEMPDIRECTORY ("pwabuilder-preview-" + [guid]::NewGuid().ToString('N') + '.json')
+                        try {
+                            @{ properties = @{ linuxFxVersion = "DOCKER|$env:IMAGE_REFERENCE" } } |
+                                ConvertTo-Json -Compress | Set-Content -LiteralPath $bodyPath -Encoding utf8
+                            & az rest --method patch --url $configUrl --body "@$bodyPath" --output none --only-show-errors
+                            if ($LASTEXITCODE -ne 0) { throw 'Could not update the preview image reference.' }
+                        } finally {
+                            if (Test-Path -LiteralPath $bodyPath) { Remove-Item -LiteralPath $bodyPath }
+                        }
+                        $configuredImage = & az rest --method get --url $configUrl --query properties.linuxFxVersion --output tsv --only-show-errors
+                        if ($LASTEXITCODE -ne 0 -or $configuredImage -cne "DOCKER|$env:IMAGE_REFERENCE") {
+                            throw 'Preview did not persist the requested image digest.'
+                        }
+                        $restartUrl = "https://management.azure.com${slotId}/restart?api-version=$apiVersion&synchronous=true"
+                        & az rest --method post --url $restartUrl --output none --only-show-errors
+                        if ($LASTEXITCODE -ne 0) { throw 'Preview restart failed.' }
+                        $url = "https://$hostName/"
+                        $timer = [System.Diagnostics.Stopwatch]::StartNew()
+                        while ($timer.Elapsed.TotalSeconds -lt 1800) {
+                            $remaining = 1800 - $timer.Elapsed.TotalSeconds
+                            $requestTimeout = [int] [Math]::Max(1, [Math]::Min(30, [Math]::Floor($remaining)))
+                            try {
+                                $response = Invoke-WebRequest -Uri $url -TimeoutSec $requestTimeout -MaximumRedirection 0 -SkipHttpErrorCheck
+                            } catch [System.Net.Http.HttpRequestException] {
+                                Write-Host "Waiting for preview: $($_.Exception.Message)"
+                                $response = $null
+                            } catch [System.Threading.Tasks.TaskCanceledException] {
+                                Write-Host 'Waiting for preview: HTTP request timed out.'
+                                $response = $null
+                            }
+                            if ($null -ne $response -and $response.StatusCode -eq 200) {
+                                Write-Host "Preview returned HTTP 200: $url"
+                                Write-Host "Configured image: $env:IMAGE_REFERENCE"
+                                Write-Host 'Next, verify https://preview.pwabuilder.com and the affected application flows.'
+                                return
+                            }
+                            if ($null -ne $response) { Write-Host "Waiting for preview: HTTP $($response.StatusCode)." }
+                            $sleepSeconds = [Math]::Min(15, [Math]::Max(0, 1800 - $timer.Elapsed.TotalSeconds))
+                            if ($sleepSeconds -gt 0) { Start-Sleep -Seconds $sleepSeconds }
+                        }
+                        throw 'Preview did not return HTTP 200 within 30 minutes. Inspect App Service startup/image-pull logs. No automatic rollback or production swap was performed.'
+                    env:
+                      EXPECTED_SUBSCRIPTION_ID: $(expectedSubscriptionId)
+                      IMAGE_REFERENCE: $(imageReference)
