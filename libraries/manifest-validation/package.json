@@ -22,7 +22,7 @@
     "prepublishOnly": "tsc"
   },
   "devDependencies": {
-    "@types/node": "^20.2.5",
+    "@types/node": "^20.19.41",
     "rimraf": "^4.1.4",
     "typescript": "^7.0.2"
   },
