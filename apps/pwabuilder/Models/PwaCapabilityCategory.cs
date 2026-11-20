@@ -24,4 +24,9 @@ public enum PwaCapabilityCategory
     /// The analysis check was on general web app capabilities, unrelated to web app manifest, service worker, or HTTPS.
     /// </summary>
     General,
+
+    /// <summary>
+    /// The analysis check was on agent readiness: whether AI agents and assistants can read and act on the web app (PE WA BE).
+    /// </summary>
+    AgentReadiness,
 }

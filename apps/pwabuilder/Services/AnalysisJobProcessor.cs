@@ -18,6 +18,7 @@ public class AnalysisJobProcessor : IHostedService
     private readonly ServiceWorkerDetector serviceWorkerDetector;
     private readonly IServiceWorkerAnalyzer serviceWorkerAnalyzer;
     private readonly GeneralWebAppCapabilityDetector generalWebAppCapabilityDetector;
+    private readonly AgentReadinessDetector agentReadinessDetector;
     private readonly AnalysisJobProcessorHealthMonitor healthMonitor;
     private readonly ILogger<AnalysisJobProcessor> logger;
 
@@ -29,6 +30,7 @@ public class AnalysisJobProcessor : IHostedService
         ServiceWorkerDetector serviceWorkerDetector,
         IServiceWorkerAnalyzer serviceWorkerAnalyzer,
         GeneralWebAppCapabilityDetector generalWebAppCapabilityDetector,
+        AgentReadinessDetector agentReadinessDetector,
         AnalysisJobProcessorHealthMonitor healthMonitor,
         ILogger<AnalysisJobProcessor> logger)
     {
@@ -39,6 +41,7 @@ public class AnalysisJobProcessor : IHostedService
         this.serviceWorkerDetector = serviceWorkerDetector;
         this.serviceWorkerAnalyzer = serviceWorkerAnalyzer;
         this.generalWebAppCapabilityDetector = generalWebAppCapabilityDetector;
+        this.agentReadinessDetector = agentReadinessDetector;
         this.healthMonitor = healthMonitor;
         this.logger = logger;
     }
@@ -162,6 +165,7 @@ public class AnalysisJobProcessor : IHostedService
 
         // Kick off the independent jobs simultaneously so that our analysis completes faster.
         var generalCapDetectionTask = generalWebAppCapabilityDetector.TryDetectAsync(job.Url, analysisLogger, cancelTokenSrc.Token);
+        var agentReadinessTask = agentReadinessDetector.TryDetectAsync(job.Url, analysisLogger, cancelTokenSrc.Token);
         var serviceWorkerDetectionTask = serviceWorkerDetector.TryDetectAsync(job.Url, analysisLogger, cancelTokenSrc.Token);
         var serviceWorkerAnalysisTask = serviceWorkerDetectionTask.ContinueWith(t => serviceWorkerAnalyzer.TryAnalyzeServiceWorkerAsync(t.Result, job.Url, analysisLogger, cancelTokenSrc.Token), TaskContinuationOptions.OnlyOnRanToCompletion).Unwrap(); // This will update analysis.Capabilities.
         var serviceWorkerOfflineTask = serviceWorkerDetectionTask.ContinueWith(t => serviceWorkerAnalyzer.TryRunOfflineCheck(t.Result, job.Url, analysisLogger, cancelTokenSrc.Token), TaskContinuationOptions.OnlyOnRanToCompletion).Unwrap(); // This will update analysis.Capabilities
@@ -213,6 +217,11 @@ public class AnalysisJobProcessor : IHostedService
         // Step 6, check for HTTPS.
         var httpsCapabilities = TryCheckHttpsCapabilities(job.Url, analysis.WebManifest, analysis.ServiceWorker);
         analysis.ProcessCapabilities(httpsCapabilities);
+        await analysisStore.SaveAsync(analysis);
+
+        // Step 6.5, agent readiness (PE WA BE): the start page summary, structured data, llms.txt and the agent card. These ran in parallel with the other checks.
+        var agentReadinessCapabilities = await agentReadinessTask;
+        analysis.ProcessCapabilities(agentReadinessCapabilities);
         await analysisStore.SaveAsync(analysis);
 
         // Step 7, check for offline capability.

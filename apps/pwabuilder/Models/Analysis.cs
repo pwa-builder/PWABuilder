@@ -81,7 +81,8 @@ public class Analysis
         .. PwaCapability.CreateGeneralCapabilities(),
         .. PwaCapability.CreateManifestCapabilities(),
         .. PwaCapability.CreateServiceWorkerCapabilities(),
-        .. PwaCapability.CreateHttpsCapabilities()
+        .. PwaCapability.CreateHttpsCapabilities(),
+        .. PwaCapability.CreateAgentReadinessCapabilities()
     ];
 
     /// <summary>
