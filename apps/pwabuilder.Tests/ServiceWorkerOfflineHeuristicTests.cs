@@ -42,6 +42,9 @@ public sealed class ServiceWorkerOfflineHeuristicTests
     [Theory]
     [InlineData("net::ERR_INTERNET_DISCONNECTED")]
     [InlineData("Navigation timeout of 20000 ms exceeded")]
+    [InlineData("net::ERR_NAME_NOT_RESOLVED at https://targetcrashed.example/")]
+    [InlineData("Failed to load https://example.com/targetCrashed/start.html")]
+    [InlineData("targetCrashed")]
     [InlineData("")]
     public void Other_failures_are_not_browser_crashes(string message)
     {

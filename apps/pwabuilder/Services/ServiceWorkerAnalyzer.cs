@@ -9,6 +9,9 @@ namespace PWABuilder.Services
     {
         private const int ActivationWaitMilliseconds = 60000;
         private const int OfflineCheckAttempts = 2;
+
+        /// <summary>The DevTools protocol event Chromium raises when a renderer crashes; PuppeteerSharp puts it in the close reason.</summary>
+        private const string CrashProtocolMarker = "Inspector.targetCrashed";
         private static readonly Regex WorkboxRoutingRegex = new(@"precacheAndRoute|registerRoute|NavigationRoute|createHandlerBoundToURL");
         private static readonly Regex FetchHandlerRegex = new(@"addEventListener\s*\(\s*['""]fetch['""]|\bonfetch\s*=");
         private static readonly Regex CacheStorageRegex = new(@"\bcaches\s*\.\s*(open|match)\s*\(");
@@ -247,9 +250,11 @@ namespace PWABuilder.Services
         public static bool IsBrowserCrash(Exception ex)
         {
             // TargetCrashedException is internal to PuppeteerSharp, so it is matched by name.
+            // The message check looks for the exact DevTools protocol event, not the bare word, so a navigation
+            // error whose URL or text happens to contain "targetCrashed" is not mistaken for a crashed tab.
             return ex is TargetClosedException
                 || ex.GetType().Name is "TargetCrashedException"
-                || ex.Message.Contains("targetCrashed", StringComparison.OrdinalIgnoreCase)
+                || ex.Message.Contains(CrashProtocolMarker, StringComparison.Ordinal)
                 || (ex.InnerException is not null && IsBrowserCrash(ex.InnerException));
         }
 
