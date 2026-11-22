@@ -102,8 +102,7 @@ namespace PWABuilder.MicrosoftStore.Models
         /// <returns></returns>
         public Uri? GetIconUriFromTargetSize(ImageTargetSize size, ImageAltForm altForm)
         {
-            // NOTE: we ignore altForm here because the web manifest doesn't support light mode icons or unplated icons.
-            // If web manifest supports these in the future, we should use those here.
+            // Light mode icons come from the proposed "color_scheme": "light" icon member, unplated icons from the "unplated" purpose.
 
             // Find images with the right dimensions.
             var (width, height) = size.GetDimensions();
@@ -122,7 +121,15 @@ namespace PWABuilder.MicrosoftStore.Models
                 // Looking for an unplated icon? Prioritize icons with "unplated" as the purpose.
                 windowsIconsWithDimensions = windowsIconsWithDimensions
                     .Where(i => i.HasPurpose("unplated") || i.IsAnyPurpose())
-                    .OrderBy(i => i.HasPurpose("unplated") ? 0 : 1);
+                    .OrderBy(i => i.HasPurpose("unplated") ? 0 : 1)
+                    .ThenBy(i => i.IsLightMode() ? 1 : 0);
+            }
+            else
+            {
+                // An icon marked "color_scheme": "light" is meant for Windows light mode only. Use it for the regular image
+                // only when no other icon has the right size, so its order in the manifest doesn't decide the default icon.
+                windowsIconsWithDimensions = windowsIconsWithDimensions
+                    .OrderBy(i => i.IsLightMode() ? 1 : 0);
             }
 
             return windowsIconsWithDimensions
