@@ -13,11 +13,15 @@ namespace PWABuilder.Services;
 public class ManifestAnalyzer
 {
     private readonly IImageValidationService imageValidator;
+    private readonly IUrlRedirectResolver? redirectResolver;
     private readonly Dictionary<PwaCapabilityId, PwaManifestCapabilityCheck> manifestChecks;
 
-    public ManifestAnalyzer(IImageValidationService imageValidator)
+    /// <param name="imageValidator">Validates manifest images.</param>
+    /// <param name="redirectResolver">Follows redirects on start_url. When null, the redirect check is skipped.</param>
+    public ManifestAnalyzer(IImageValidationService imageValidator, IUrlRedirectResolver? redirectResolver = null)
     {
         this.imageValidator = imageValidator;
+        this.redirectResolver = redirectResolver;
         this.manifestChecks = CreateManifestChecks();
     }
 
@@ -149,7 +153,7 @@ public class ManifestAnalyzer
             PwaCapabilityId.NoteTaking => new PwaManifestCapabilityCheck(capability, CheckNoteTaking),
             PwaCapabilityId.Scope => new PwaManifestCapabilityCheck(capability, m => CheckManifestStringField(m.Manifest, "scope", 1)),
             PwaCapabilityId.ShortName => new PwaManifestCapabilityCheck(capability, m => CheckManifestStringField(m.Manifest, "short_name", 1)),
-            PwaCapabilityId.StartUrl => new PwaManifestCapabilityCheck(capability, m => CheckManifestStringField(m.Manifest, "start_url", 1)),
+            PwaCapabilityId.StartUrl => new PwaManifestCapabilityCheck(capability, CheckStartUrl),
             PwaCapabilityId.Display => new PwaManifestCapabilityCheck(capability, m => CheckManifestStringField(m.Manifest, "display", 1, ["fullscreen", "standalone", "minimal-ui", "browser", "tabbed", "window-controls-overlay"])),
             PwaCapabilityId.Orientation => new PwaManifestCapabilityCheck(capability, m => CheckManifestStringField(m.Manifest, "orientation", 1, ["any", "natural", "landscape", "landscape-primary", "landscape-secondary", "portrait", "portrait-primary", "portrait-secondary"])),
             PwaCapabilityId.Language => new PwaManifestCapabilityCheck(capability, m => CheckManifestStringField(m.Manifest, "lang", 2)),
@@ -559,6 +563,85 @@ public class ManifestAnalyzer
     private static PwaCapabilityCheckStatus CheckImagesAreNotBase64Encoded(ManifestDetection manifest)
     {
         return manifest.HasBase64EncodedImages ? PwaCapabilityCheckStatus.Failed : PwaCapabilityCheckStatus.Passed;
+    }
+
+    /// <summary>
+    /// Checks that start_url is present and that it doesn't redirect out of the app.
+    /// A start_url that redirects to another origin or outside the manifest scope makes the installed app open
+    /// outside its own scope, which breaks things like shortcuts and the standalone window.
+    /// </summary>
+    private async Task<Result<PwaCapabilityCheckStatus>> CheckStartUrl(ManifestDetection manifestContext, CancellationToken cancelToken)
+    {
+        var fieldStatus = CheckManifestStringField(manifestContext.Manifest, "start_url", 1);
+        if (fieldStatus != PwaCapabilityCheckStatus.Passed || redirectResolver is null)
+        {
+            return fieldStatus;
+        }
+
+        var startUrl = ResolveStartUrl(manifestContext);
+        if (startUrl is null || (startUrl.Scheme != Uri.UriSchemeHttps && startUrl.Scheme != Uri.UriSchemeHttp))
+        {
+            return fieldStatus;
+        }
+
+        var finalUrl = await redirectResolver.TryGetFinalUrlAsync(startUrl, cancelToken);
+        var redirectError = GetStartUrlRedirectError(startUrl, finalUrl, ResolveScope(manifestContext, startUrl));
+        return redirectError is null ? PwaCapabilityCheckStatus.Passed : new Exception(redirectError);
+    }
+
+    /// <summary>
+    /// Resolves start_url against the manifest URL. Returns null when it isn't a usable URL.
+    /// </summary>
+    internal static Uri? ResolveStartUrl(ManifestDetection manifestContext)
+    {
+        return manifestContext.Manifest.TryGetProperty("start_url", out var value)
+            && value.ValueKind == JsonValueKind.String
+            && Uri.TryCreate(manifestContext.Url, value.GetString(), out var startUrl)
+            ? startUrl
+            : null;
+    }
+
+    /// <summary>
+    /// Resolves the manifest scope against the manifest URL. Without a usable scope, the default is the start URL's directory, as the manifest spec defines it.
+    /// </summary>
+    internal static Uri ResolveScope(ManifestDetection manifestContext, Uri startUrl)
+    {
+        if (manifestContext.Manifest.TryGetProperty("scope", out var value)
+            && value.ValueKind == JsonValueKind.String
+            && Uri.TryCreate(manifestContext.Url, value.GetString(), out var scope)
+            && scope.Scheme == startUrl.Scheme
+            && scope.IsBaseOf(startUrl))
+        {
+            return scope;
+        }
+
+        return new Uri(startUrl, "./");
+    }
+
+    /// <summary>
+    /// Describes the problem when start_url redirects to another origin or outside the scope. Returns null when it doesn't,
+    /// or when the final URL is unknown (a network failure isn't the site's fault, so it doesn't fail the check).
+    /// </summary>
+    internal static string? GetStartUrlRedirectError(Uri startUrl, Uri? finalUrl, Uri scope)
+    {
+        if (finalUrl is null)
+        {
+            return null;
+        }
+
+        var sameOrigin = Uri.Compare(startUrl, finalUrl, UriComponents.SchemeAndServer, UriFormat.Unescaped, StringComparison.OrdinalIgnoreCase) == 0;
+        if (!sameOrigin)
+        {
+            return $"Your start_url redirects to {finalUrl.GetLeftPart(UriPartial.Path)}, which is on a different origin. Browsers then open your installed app outside its own scope, and features like shortcuts may not work. Point start_url at the page your users actually land on.";
+        }
+
+        var inScope = finalUrl.AbsolutePath.StartsWith(scope.AbsolutePath, StringComparison.Ordinal);
+        if (!inScope)
+        {
+            return $"Your start_url redirects to {finalUrl.AbsolutePath}, which is outside your app's scope ({scope.AbsolutePath}). Browsers then open your installed app outside its own scope, and features like shortcuts may not work. Point start_url at the page your users actually land on, or widen the scope.";
+        }
+
+        return null;
     }
 
     private static PwaCapabilityCheckStatus CheckManifestStringField(JsonElement manifest, string fieldName, int minLength = 1, params string[] allowedValues)

@@ -80,6 +80,7 @@ builder.Services.AddSingleton<ILighthouseService, LighthouseService>();
 builder.Services.AddSingleton<ManifestAnalyzer>();
 builder.Services.AddSingleton<IServiceWorkerAnalyzer, ServiceWorkerAnalyzer>();
 builder.Services.AddSingleton<IImageValidationService, ImageValidationService>();
+builder.Services.AddSingleton<IUrlRedirectResolver, UrlRedirectResolver>();
 builder.Services.AddSingleton<StoreImageCreator>();
 builder.Services.AddSingleton(services =>
 {
