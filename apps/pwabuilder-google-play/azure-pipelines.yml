@@ -1,39 +1,292 @@
-# Docker
-# Build and push an image to Azure Container Registry
-# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+# Save at the PWABuilder repository root. Pools match SFC.Client.Web/pipelines/localization.yml.
+# Keep StartRight-required SDL, TSA, image-scanning, and release checks enabled.
+name: pwabuilder-google-play-$(Date:yyyyMMdd).$(Rev:r)
 
 trigger:
-- master
+  batch: true
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - apps/pwabuilder-google-play/*
+      - azure-pipelines-google-play.yml
+pr: none
 
-resources:
-- repo: self
+parameters:
+  - name: deployStaging
+    displayName: Push the image and deploy it to the Google Play packager staging slot (off = build only, no Azure access). Runs triggered by main always use the default.
+    type: boolean
+    default: false
+  - name: imageDigest
+    displayName: Redeploy an existing image instead of building (sha256:<64 hex>; leave empty to build). Implies deploy; use to roll back.
+    type: string
+    default: ''
 
 variables:
-  # Container registry service connection established during pipeline creation
-  dockerRegistryServiceConnection: '57b45fcd-5ca7-4036-b3ee-d80980e8ecc1'
-  imageRepository: 'pwabuildercloudapk'
-  containerRegistry: 'pwabuilder.azurecr.io'
-  dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
-  tag: '$(Build.BuildId)'
-  
-  # Agent VM image name
-  vmImageName: 'ubuntu-latest'
+  - name: armServiceConnection
+    value: Arm-PWA-Builder-Deploy
+  - name: expectedSubscriptionId
+    value: fd642677-2fa9-4d8a-8b25-788656871b24
 
-stages:
-- stage: Build
-  displayName: Build and push stage
-  jobs:  
-  - job: Build
-    displayName: Build
+resources:
+  repositories:
+    - repository: 1esPipelines
+      type: git
+      name: 1ESPipelineTemplates/1ESPipelineTemplates
+      ref: refs/tags/release
+
+extends:
+  template: v1/1ES.Official.PipelineTemplate.yml@1esPipelines
+  parameters:
+    settings:
+      networkIsolationPolicy: Permissive
     pool:
-      vmImage: $(vmImageName)
-    steps:
-    - task: Docker@2
-      displayName: Build and push an image to container registry
-      inputs:
-        command: buildAndPush
-        repository: $(imageRepository)
-        dockerfile: $(dockerfilePath)
-        containerRegistry: $(dockerRegistryServiceConnection)
-        tags: |
-          $(tag)
+      name: Azure-Pipelines-1ESPT-ExDShared
+      image: ubuntu-latest
+      os: linux
+    sdl:
+      sourceAnalysisPool:
+        name: Azure-Pipelines-1ESPT-ExDShared
+        image: windows-latest
+        os: windows
+    stages:
+      - stage: Build
+        displayName: Build web image
+        condition: ${{ eq(parameters.imageDigest, '') }}
+        lockBehavior: sequential
+        jobs:
+          - job: BuildImage
+            timeoutInMinutes: 120
+            steps:
+              - checkout: self
+                clean: true
+                persistCredentials: false
+                fetchDepth: 1
+                fetchTags: false
+
+              - pwsh: |
+                  $ErrorActionPreference = 'Stop'
+                  if ($env:BUILD_SOURCEBRANCH -cne 'refs/heads/main' -or
+                      $env:BUILD_REASON -cnotin @('Manual', 'IndividualCI', 'BatchedCI') -or
+                      $env:BUILD_REPOSITORY_NAME -cne 'pwa-builder/PWABuilder') {
+                      throw 'Only manual or CI builds of pwa-builder/PWABuilder main are supported.'
+                  }
+                  if ($env:BUILD_SOURCEVERSION -cnotmatch '^[0-9a-f]{40}$' -or
+                      $env:BUILD_BUILDID -notmatch '^[0-9]+$' -or
+                      $env:SYSTEM_JOBATTEMPT -notmatch '^[0-9]+$') {
+                      throw 'Missing or invalid Azure Pipelines source/build identifiers.'
+                  }
+                  $tag = "pwabuilder.azurecr.io/pwabuilder/cloudapk-prod:staging-$env:BUILD_SOURCEVERSION-$env:BUILD_BUILDID-$env:SYSTEM_JOBATTEMPT"
+                  $dockerOs = & docker info --format '{{.OSType}}'
+                  if ($LASTEXITCODE -ne 0 -or $dockerOs -cne 'linux') {
+                      throw 'A working Linux Docker daemon is required.'
+                  }
+                  $env:DOCKER_BUILDKIT = '1'
+                  & docker build --pull --no-cache --file apps/pwabuilder-google-play/Dockerfile --tag $tag --memory 4GB `
+                      --build-arg UBUNTU_IMAGE=mcr.microsoft.com/mirror/docker/library/ubuntu:24.04 `
+                      --build-arg UBUNTU_MIRROR_HOST=azure.archive.ubuntu.com `
+                      apps/pwabuilder-google-play
+                  if ($LASTEXITCODE -ne 0) { throw 'Docker build failed.' }
+                  Write-Host "##vso[task.setvariable variable=BuiltImageTag]$tag"
+                  Write-Host "Built $tag"
+                displayName: Validate trusted source and build
+                workingDirectory: $(Build.SourcesDirectory)
+
+              - ${{ if eq(parameters.deployStaging, true) }}:
+                  - task: AzureCLI@2
+                    name: PushImage
+                    displayName: Push image and capture immutable digest
+                    inputs:
+                      azureSubscription: ${{ variables.armServiceConnection }}
+                      scriptType: pscore
+                      scriptLocation: inlineScript
+                      visibleAzLogin: false
+                      addSpnToEnvironment: false
+                      useGlobalConfig: false
+                      workingDirectory: $(Build.SourcesDirectory)
+                      inlineScript: |
+                        $ErrorActionPreference = 'Stop'
+                        $subscription = & az account show --query id --output tsv --only-show-errors
+                        if ($LASTEXITCODE -ne 0 -or $subscription -ne $env:EXPECTED_SUBSCRIPTION_ID) {
+                            throw 'The ARM service connection is not using the expected PWA Builder subscription.'
+                        }
+                        if ($env:IMAGE_TAG -cnotmatch '^pwabuilder\.azurecr\.io/pwabuilder/cloudapk-prod:staging-[0-9a-f]{40}-[0-9]+-[0-9]+$') {
+                            throw 'The built image tag is missing or invalid.'
+                        }
+                        $dockerConfig = Join-Path $env:AGENT_TEMPDIRECTORY ("pwabuilder-acr-" + [guid]::NewGuid().ToString('N'))
+                        New-Item -ItemType Directory -Path $dockerConfig | Out-Null
+                        $env:DOCKER_CONFIG = $dockerConfig
+                        try {
+                            & az acr login --name pwabuilder --resource-group pwabuilder-registry --only-show-errors
+                            if ($LASTEXITCODE -ne 0) { throw 'ACR login failed.' }
+                            & docker push $env:IMAGE_TAG
+                            if ($LASTEXITCODE -ne 0) { throw 'Docker push failed.' }
+                            $digestsJson = & docker image inspect --format '{{json .RepoDigests}}' $env:IMAGE_TAG
+                            if ($LASTEXITCODE -ne 0) { throw 'Could not inspect the pushed image.' }
+                            $matches = @($digestsJson | ConvertFrom-Json | Where-Object {
+                                $_ -cmatch '^pwabuilder\.azurecr\.io/pwabuilder/cloudapk-prod@sha256:[0-9a-f]{64}$'
+                            })
+                            if ($matches.Count -ne 1) {
+                                throw 'Docker did not return exactly one expected immutable registry digest.'
+                            }
+                            $image = $matches[0]
+                            Write-Host "##vso[task.setvariable variable=imageReference;isOutput=true]$image"
+                            Write-Host "Pushed immutable image: $image"
+                        } finally {
+                            Remove-Item -LiteralPath $dockerConfig -Recurse -Force
+                            Remove-Item Env:DOCKER_CONFIG
+                        }
+                    env:
+                      EXPECTED_SUBSCRIPTION_ID: $(expectedSubscriptionId)
+                      IMAGE_TAG: $(BuiltImageTag)
+
+      - ${{ if or(eq(parameters.deployStaging, true), ne(parameters.imageDigest, '')) }}:
+          - stage: Deploy
+            displayName: Deploy Google Play packager staging only
+            ${{ if eq(parameters.imageDigest, '') }}:
+              dependsOn: Build
+            ${{ else }}:
+              dependsOn: []
+            condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), in(variables['Build.Reason'], 'Manual', 'IndividualCI', 'BatchedCI'))
+            lockBehavior: sequential
+            variables:
+              ${{ if eq(parameters.imageDigest, '') }}:
+                imageReference: $[ stageDependencies.Build.BuildImage.outputs['PushImage.imageReference'] ]
+              ${{ else }}:
+                imageReference: pwabuilder.azurecr.io/pwabuilder/cloudapk-prod@${{ parameters.imageDigest }}
+            jobs:
+              - job: DeployStaging
+                timeoutInMinutes: 75
+                templateContext:
+                  type: releaseJob
+                  isProduction: true
+                steps:
+                  - checkout: none
+                  - task: AzureCLI@2
+                    displayName: Pin staging image, restart, and check readiness
+                    inputs:
+                      azureSubscription: ${{ variables.armServiceConnection }}
+                      scriptType: pscore
+                      scriptLocation: inlineScript
+                      visibleAzLogin: false
+                      addSpnToEnvironment: false
+                      useGlobalConfig: false
+                      inlineScript: |
+                        $ErrorActionPreference = 'Stop'
+                        if ($env:IMAGE_REFERENCE -cnotmatch '^pwabuilder\.azurecr\.io/pwabuilder/cloudapk-prod@sha256:[0-9a-f]{64}$') {
+                            throw 'No valid immutable image reference was supplied by this run.'
+                        }
+                        $subscription = & az account show --query id --output tsv --only-show-errors
+                        if ($LASTEXITCODE -ne 0 -or $subscription -ne $env:EXPECTED_SUBSCRIPTION_ID) {
+                            throw 'The ARM service connection is not using the expected PWA Builder subscription.'
+                        }
+                        $slotId = "/subscriptions/$subscription/resourceGroups/pwabuilder-prod/providers/Microsoft.Web/sites/pwabuilder-cloudapk/slots/staging"
+                        $apiVersion = '2024-11-01'
+                        $slotUrl = "https://management.azure.com${slotId}?api-version=$apiVersion"
+                        $configUrl = "https://management.azure.com${slotId}/config/web?api-version=$apiVersion"
+                        $slotJson = & az rest --method get --url $slotUrl --output json --only-show-errors
+                        if ($LASTEXITCODE -ne 0) { throw 'Could not read the existing staging slot.' }
+                        $slot = $slotJson | ConvertFrom-Json
+                        if ($slot.properties.reserved -ne $true -or $slot.properties.state -ne 'Running') {
+                            throw 'Staging must already be an enabled, running Linux slot; this pipeline does not provision or start stopped slots.'
+                        }
+                        $hostName = [string] $slot.properties.defaultHostName
+                        if ($hostName -cnotmatch '^pwabuilder-cloudapk-staging(?:-[a-z0-9]+)?(?:\.[a-z0-9-]+)?\.azurewebsites\.net$') {
+                            throw 'Staging has an unexpected default hostname; review the target before deploying.'
+                        }
+                        $configJson = & az rest --method get --url $configUrl --output json --only-show-errors
+                        if ($LASTEXITCODE -ne 0) { throw 'Could not read staging configuration.' }
+                        $config = $configJson | ConvertFrom-Json
+                        if (-not [string]::IsNullOrWhiteSpace($config.properties.autoSwapSlotName)) {
+                            throw 'Staging has auto-swap configured. Disable it through an approved configuration change before using this pipeline.'
+                        }
+                        if ($config.properties.linuxFxVersion -notlike 'DOCKER|*') {
+                            throw 'Expected an existing classic Linux Docker slot; sidecar/native-runtime conversion is outside this pipeline.'
+                        }
+                        if ($config.properties.acrUseManagedIdentityCreds -ne $true) {
+                            throw 'Configure and verify staging managed-identity ACR pulls before deploying.'
+                        }
+                        & az acr repository show --name pwabuilder --image ($env:IMAGE_REFERENCE -replace '^pwabuilder\.azurecr\.io/', '') --output none --only-show-errors
+                        if ($LASTEXITCODE -ne 0) { throw 'The image digest was not found in the pwabuilder registry.' }
+                        $previousLinuxFxVersion = [string] $config.properties.linuxFxVersion
+                        $newLinuxFxVersion = "DOCKER|$env:IMAGE_REFERENCE"
+                        Write-Host "Previous staging image: $previousLinuxFxVersion"
+
+                        function Set-PreviewImage([string] $linuxFxVersion) {
+                            $bodyPath = Join-Path $env:AGENT_TEMPDIRECTORY ("pwabuilder-staging-" + [guid]::NewGuid().ToString('N') + '.json')
+                            try {
+                                @{ properties = @{ linuxFxVersion = $linuxFxVersion } } |
+                                    ConvertTo-Json -Compress | Set-Content -LiteralPath $bodyPath -Encoding utf8
+                                & az rest --method patch --url $configUrl --body "@$bodyPath" --output none --only-show-errors
+                                if ($LASTEXITCODE -ne 0) { throw 'Could not update the staging image reference.' }
+                            } finally {
+                                if (Test-Path -LiteralPath $bodyPath) { Remove-Item -LiteralPath $bodyPath }
+                            }
+                            $configuredImage = & az rest --method get --url $configUrl --query properties.linuxFxVersion --output tsv --only-show-errors
+                            if ($LASTEXITCODE -ne 0 -or $configuredImage -cne $linuxFxVersion) {
+                                throw 'Staging did not persist the requested image reference.'
+                            }
+                            $restartUrl = "https://management.azure.com${slotId}/restart?api-version=$apiVersion&synchronous=true"
+                            & az rest --method post --url $restartUrl --output none --only-show-errors
+                            if ($LASTEXITCODE -ne 0) { throw 'Staging restart failed.' }
+                        }
+
+                        function Wait-Preview([int] $timeoutSeconds) {
+                            $url = "https://$hostName/ping"
+                            $timer = [System.Diagnostics.Stopwatch]::StartNew()
+                            while ($timer.Elapsed.TotalSeconds -lt $timeoutSeconds) {
+                                $remaining = $timeoutSeconds - $timer.Elapsed.TotalSeconds
+                                $requestTimeout = [int] [Math]::Max(1, [Math]::Min(30, [Math]::Floor($remaining)))
+                                try {
+                                    $response = Invoke-WebRequest -Uri $url -TimeoutSec $requestTimeout -MaximumRedirection 0 -SkipHttpErrorCheck
+                                } catch [System.Net.Http.HttpRequestException] {
+                                    Write-Host "Waiting for staging: $($_.Exception.Message)"
+                                    $response = $null
+                                } catch [System.Threading.Tasks.TaskCanceledException] {
+                                    Write-Host 'Waiting for staging: HTTP request timed out.'
+                                    $response = $null
+                                }
+                                if ($null -ne $response -and $response.StatusCode -eq 200) {
+                                    Write-Host "Staging returned HTTP 200: $url"
+                                    return $true
+                                }
+                                if ($null -ne $response) { Write-Host "Waiting for staging: HTTP $($response.StatusCode)." }
+                                $sleepSeconds = [Math]::Min(15, [Math]::Max(0, $timeoutSeconds - $timer.Elapsed.TotalSeconds))
+                                if ($sleepSeconds -gt 0) { Start-Sleep -Seconds $sleepSeconds }
+                            }
+                            return $false
+                        }
+
+                        $deployFailure = $null
+                        try {
+                            Set-PreviewImage $newLinuxFxVersion
+                            if (-not (Wait-Preview 1800)) { $deployFailure = 'Staging did not return HTTP 200 within 30 minutes.' }
+                        } catch {
+                            $deployFailure = $_.Exception.Message
+                        }
+                        if ($null -eq $deployFailure) {
+                            Write-Host "Configured image: $env:IMAGE_REFERENCE"
+                            Write-Host 'Next, verify the Google Play packaging flow in the staging environment.'
+                            return
+                        }
+
+                        Write-Host "##vso[task.logissue type=error]Deploy failed: $deployFailure"
+                        if ($previousLinuxFxVersion -ceq $newLinuxFxVersion) {
+                            throw "$deployFailure The previous image is the same image, so there is nothing to roll back to."
+                        }
+                        Write-Host "Rolling back staging to: $previousLinuxFxVersion"
+                        $rolledBack = $false
+                        try {
+                            Set-PreviewImage $previousLinuxFxVersion
+                            $rolledBack = Wait-Preview 900
+                        } catch {
+                            Write-Host "Rollback error: $($_.Exception.Message)"
+                        }
+                        if ($rolledBack) {
+                            throw "$deployFailure Rolled back: staging is serving the previous image again ($previousLinuxFxVersion)."
+                        }
+                        throw "$deployFailure Rollback to the previous image did not return HTTP 200 either; staging needs manual attention."
+                    env:
+                      EXPECTED_SUBSCRIPTION_ID: $(expectedSubscriptionId)
+                      IMAGE_REFERENCE: $(imageReference)
