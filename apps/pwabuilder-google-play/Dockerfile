@@ -1,5 +1,10 @@
 # ─── PRELIMINAR: Ubuntu base con Android/Java toolchain ───────────────────────
-FROM --platform=linux/amd64 ubuntu:24.04  AS ubuntu
+# Optional overrides for build environments that cannot reach Docker Hub or archive.ubuntu.com, for example
+#   --build-arg UBUNTU_IMAGE=mcr.microsoft.com/mirror/docker/library/ubuntu:24.04
+#   --build-arg UBUNTU_MIRROR_HOST=azure.archive.ubuntu.com
+# Leave them unset to use the defaults.
+ARG UBUNTU_IMAGE=ubuntu:24.04
+FROM --platform=linux/amd64 ${UBUNTU_IMAGE}  AS ubuntu
 
 ARG ANDROID_SDK_TOOLS_VERSION="15641748"
 ARG NODE_VERSION="24.x"
@@ -28,7 +33,14 @@ ENV PATH="${JENV_ROOT}/shims:${JENV_ROOT}/bin:$JAVA_HOME/bin:$PATH:$ANDROID_SDK_
 FROM ubuntu AS pre-base
 ARG TERM=dumb
 ARG DEBIAN_FRONTEND=noninteractive
+ARG UBUNTU_MIRROR_HOST=
 WORKDIR ${DIRWORK}
+
+RUN if [ -n "$UBUNTU_MIRROR_HOST" ]; then \
+      for f in /etc/apt/sources.list /etc/apt/sources.list.d/*.sources /etc/apt/sources.list.d/*.list; do \
+        if [ -f "$f" ]; then sed -i -e "s#//archive.ubuntu.com#//${UBUNTU_MIRROR_HOST}#g" -e "s#//security.ubuntu.com#//${UBUNTU_MIRROR_HOST}#g" "$f"; fi; \
+      done; \
+    fi
 
 RUN echo export JAVA_HOME="/usr/lib/jvm/java-17-openjdk-$(uname -m)/" >> /etc/jdk.env && \
     echo . /etc/jdk.env >> /etc/bash.bashrc && echo . /etc.jdk.env >> /etc/profile && \
