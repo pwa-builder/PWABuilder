@@ -25,9 +25,9 @@ parameters:
     type: boolean
     default: true
   - name: imageDigest
-    displayName: Redeploy an existing image instead of building (sha256:<64 hex>; leave empty to build). Implies deploy; use to roll back.
+    displayName: Redeploy an existing image instead of building (sha256:<64 hex>; leave as "none" to build). Implies deploy; use to roll back.
     type: string
-    default: ''
+    default: none
 
 variables:
   - name: armServiceConnection
@@ -59,7 +59,7 @@ extends:
     stages:
       - stage: Build
         displayName: Build web image
-        condition: ${{ eq(parameters.imageDigest, '') }}
+        condition: ${{ eq(parameters.imageDigest, 'none') }}
         lockBehavior: sequential
         jobs:
           - job: BuildImage
@@ -195,17 +195,17 @@ extends:
                       EXPECTED_SUBSCRIPTION_ID: $(expectedSubscriptionId)
                       IMAGE_TAG: $(BuiltImageTag)
 
-      - ${{ if or(eq(parameters.deployPreview, true), ne(parameters.imageDigest, '')) }}:
+      - ${{ if or(eq(parameters.deployPreview, true), ne(parameters.imageDigest, 'none')) }}:
           - stage: Deploy
             displayName: Deploy shared preview only
-            ${{ if eq(parameters.imageDigest, '') }}:
+            ${{ if eq(parameters.imageDigest, 'none') }}:
               dependsOn: Build
             ${{ else }}:
               dependsOn: []
             condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), in(variables['Build.Reason'], 'Manual', 'IndividualCI', 'BatchedCI'))
             lockBehavior: sequential
             variables:
-              ${{ if eq(parameters.imageDigest, '') }}:
+              ${{ if eq(parameters.imageDigest, 'none') }}:
                 imageReference: $[ stageDependencies.Build.BuildImage.outputs['PushImage.imageReference'] ]
               ${{ else }}:
                 imageReference: pwabuilder.azurecr.io/pwabuilder@${{ parameters.imageDigest }}
