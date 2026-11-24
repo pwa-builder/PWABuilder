@@ -1,4 +1,4 @@
-# Save at the PWABuilder repository root. Pools match SFC.Client.Web/pipelines/localization.yml.
+# Pools match SFC.Client.Web/pipelines/localization.yml.
 # Keep StartRight-required SDL, TSA, image-scanning, and release checks enabled.
 name: pwabuilder-google-play-$(Date:yyyyMMdd).$(Rev:r)
 
@@ -10,7 +10,6 @@ trigger:
   paths:
     include:
       - apps/pwabuilder-google-play/*
-      - azure-pipelines-google-play.yml
 pr: none
 
 parameters:
@@ -19,9 +18,9 @@ parameters:
     type: boolean
     default: false
   - name: imageDigest
-    displayName: Redeploy an existing image instead of building (sha256:<64 hex>; leave empty to build). Implies deploy; use to roll back.
+    displayName: Redeploy an existing image instead of building (sha256:<64 hex>; leave as "none" to build). Implies deploy; use to roll back.
     type: string
-    default: ''
+    default: none
 
 variables:
   - name: armServiceConnection
@@ -53,7 +52,7 @@ extends:
     stages:
       - stage: Build
         displayName: Build web image
-        condition: ${{ eq(parameters.imageDigest, '') }}
+        condition: ${{ eq(parameters.imageDigest, 'none') }}
         lockBehavior: sequential
         jobs:
           - job: BuildImage
@@ -141,17 +140,17 @@ extends:
                       EXPECTED_SUBSCRIPTION_ID: $(expectedSubscriptionId)
                       IMAGE_TAG: $(BuiltImageTag)
 
-      - ${{ if or(eq(parameters.deployStaging, true), ne(parameters.imageDigest, '')) }}:
+      - ${{ if or(eq(parameters.deployStaging, true), ne(parameters.imageDigest, 'none')) }}:
           - stage: Deploy
             displayName: Deploy Google Play packager staging only
-            ${{ if eq(parameters.imageDigest, '') }}:
+            ${{ if eq(parameters.imageDigest, 'none') }}:
               dependsOn: Build
             ${{ else }}:
               dependsOn: []
             condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), in(variables['Build.Reason'], 'Manual', 'IndividualCI', 'BatchedCI'))
             lockBehavior: sequential
             variables:
-              ${{ if eq(parameters.imageDigest, '') }}:
+              ${{ if eq(parameters.imageDigest, 'none') }}:
                 imageReference: $[ stageDependencies.Build.BuildImage.outputs['PushImage.imageReference'] ]
               ${{ else }}:
                 imageReference: pwabuilder.azurecr.io/pwabuilder/cloudapk-prod@${{ parameters.imageDigest }}
