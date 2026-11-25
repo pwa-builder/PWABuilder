@@ -74,6 +74,7 @@ builder.Services.AddSingleton<ManifestDetector>();
 builder.Services.AddSingleton<ServiceWorkerDetector>();
 builder.Services.AddSingleton<ManifestCreator>();
 builder.Services.AddSingleton<GeneralWebAppCapabilityDetector>();
+builder.Services.AddSingleton<AgentReadinessDetector>();
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<ITelemetryService, TelemetryService>();
 builder.Services.AddSingleton<ILighthouseService, LighthouseService>();

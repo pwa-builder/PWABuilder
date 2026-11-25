@@ -94,9 +94,9 @@ export type PwaCapability = {
 
 export type PwaCapabilityLevel = "Required" | "Recommended" | "Optional" | "Feature";
 
-export type PwaCapabilityCategory = "ServiceWorker" | "WebAppManifest" | "Https" | "General";
+export type PwaCapabilityCategory = "ServiceWorker" | "WebAppManifest" | "Https" | "General" | "AgentReadiness";
 
-export type PwaCapabilityId = "HasManifest" | "Name" | "Id" | "ShortName" | "Description" | "BackgroundColor" | "Shortcuts" | "Categories" | "Icons" | "ThemeColor" | "Scope" | "ScopeExtensions" | "Display" | "Orientation" | "Language" | "Direction" | "Screenshots" | "FileHandlers" | "LaunchHandlers" | "PreferRelatedApplication" | "RelatedApplication" | "ProtocolHandlers" | "ShareTarget" | "IarcRatingId" | "DisplayOverride" | "WindowControlsOverlay" | "TabbedDisplay" | "NoteTaking" | "StartUrl" | "Widgets" | "EdgeSidePanel" | "IconsAreFetchable" | "ImagesAreNotBase64Encoded" | "HasSquare192x192PngAnyPurposeIcon" | "HasSquare512x512PngAnyPurposeIcon" | "ScreenshotsAreFetchable" | "HasWideScreenshot" | "HasNarrowScreenshot" | "HasServiceWorker" | "ServiceWorkerIsNotEmpty" | "PeriodicSync" | "BackgroundSync" | "PushNotifications" | "OfflineSupport" | "HasHttps" | "NoMixedContent" | "ServesHtml";
+export type PwaCapabilityId = "HasManifest" | "Name" | "Id" | "ShortName" | "Description" | "BackgroundColor" | "Shortcuts" | "Categories" | "Icons" | "ThemeColor" | "Scope" | "ScopeExtensions" | "Display" | "Orientation" | "Language" | "Direction" | "Screenshots" | "FileHandlers" | "LaunchHandlers" | "PreferRelatedApplication" | "RelatedApplication" | "ProtocolHandlers" | "ShareTarget" | "IarcRatingId" | "DisplayOverride" | "WindowControlsOverlay" | "TabbedDisplay" | "NoteTaking" | "StartUrl" | "Widgets" | "EdgeSidePanel" | "IconsAreFetchable" | "ImagesAreNotBase64Encoded" | "HasSquare192x192PngAnyPurposeIcon" | "HasSquare512x512PngAnyPurposeIcon" | "ScreenshotsAreFetchable" | "HasWideScreenshot" | "HasNarrowScreenshot" | "HasServiceWorker" | "ServiceWorkerIsNotEmpty" | "PeriodicSync" | "BackgroundSync" | "PushNotifications" | "OfflineSupport" | "HasHttps" | "NoMixedContent" | "ServesHtml" | "PageSummary" | "StructuredData" | "LlmsTxt" | "AgentCard";
 
 export type PwaCapabilityStatus = "InProgress" | "Skipped" | "Passed" | "Failed";
 

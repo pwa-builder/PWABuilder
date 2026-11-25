@@ -1026,6 +1026,38 @@ export const appReportStyles = css`
 		margin-top: auto;
 	}
 
+	/* Agent readiness card */
+	#agent {
+		width: 100%;
+		background: #ffffff;
+		display: flex;
+		flex-direction: column;
+		border-radius: var(--card-border-radius);
+	}
+
+	#agent-header {
+		row-gap: 0.5em;
+		padding: 1em;
+	}
+
+	#agent-top {
+		display: flex;
+		justify-content: space-between;
+		column-gap: 1em;
+	}
+
+	#agent-text {
+		width: 100%;
+		row-gap: 0.5em;
+	}
+
+	#agent-actions {
+		row-gap: 1em;
+		width: fit-content;
+		align-items: flex-start;
+		margin-top: auto;
+	}
+
 	/* Sec Card */
 	/* Classes used widely */
 	.flex-col {
