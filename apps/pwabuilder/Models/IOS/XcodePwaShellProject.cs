@@ -24,6 +24,8 @@ namespace PWABuilder.IOS.Models
         {
             UpdateAppColors();
             UpdateAppNameAndUrls();
+            UpdateShellOptions();
+            UpdateSplashIconSize();
             UpdateAppBundleId();
             RenameProjectFolders();
             UpdateProjectFolderReferences();
@@ -61,9 +63,9 @@ namespace PWABuilder.IOS.Models
             var settingsFile = GetFile("Settings.swift");
             var entitlementsXmlFile = GetFile("Entitlements.plist");
 
-            // Update app name
+            // Update the display name, the name under the icon on the home screen. It defaults to the app name.
             var appNameExisting = "<string>{{PWABuilder.iOS.appName}}</string>";
-            var appNameDesired = $"<string>{GetXmlSafeNodeValue(options.Name)}</string>";
+            var appNameDesired = $"<string>{GetXmlSafeNodeValue(options.DisplayName)}</string>";
             infoPlistXmlFile.Replace(appNameExisting, appNameDesired);
 
             // Add URL and permitted URLs to app bound domains (used for service worker) in Info.plist
@@ -121,6 +123,126 @@ namespace PWABuilder.IOS.Models
                 entitlementsWebcredentialsUrlDesired
             );
         }
+
+        /// <summary>
+        /// Writes the display mode, status bar style and appearance into Settings.swift and Info.plist.
+        /// The shell already reads these constants; they were fixed values until now.
+        /// </summary>
+        private void UpdateShellOptions()
+        {
+            var settingsFile = GetFile("Settings.swift");
+            var infoPlistXmlFile = GetFile("Info.plist");
+
+            settingsFile.Replace("{{PWABuilder.iOS.displayMode}}", options.DisplayMode);
+
+            // Status bar text and icons. "auto" keeps the shell's adaptive behavior; "light" or "dark" fix the style.
+            // The shell's statusBarTheme names the app background: "dark" background means light status bar text.
+            var overrideStatusBar = options.StatusBarStyle != "auto";
+            var statusBarTheme = options.StatusBarStyle == "light" ? "dark" : "light";
+            settingsFile.Replace("{{PWABuilder.iOS.overrideStatusBar}}", overrideStatusBar ? "true" : "false");
+            settingsFile.Replace("{{PWABuilder.iOS.statusBarTheme}}", statusBarTheme);
+            var statusBarStyleValue = options.StatusBarStyle switch
+            {
+                "light" => "UIStatusBarStyleLightContent",
+                "dark" => "UIStatusBarStyleDarkContent",
+                _ => "UIStatusBarStyleDefault"
+            };
+            infoPlistXmlFile.Replace("<string>{{PWABuilder.iOS.statusBarStyle}}</string>", $"<string>{statusBarStyleValue}</string>");
+
+            // Appearance. "auto" lets iOS 15+ follow the web view background (adaptiveUIStyle) and the system theme.
+            // "light" or "dark" lock the app with UIUserInterfaceStyle and switch the adaptive behavior off.
+            settingsFile.Replace("{{PWABuilder.iOS.adaptiveUIStyle}}", options.Appearance == "auto" ? "true" : "false");
+            var appearanceEntry = options.Appearance switch
+            {
+                "light" => "\t<key>UIUserInterfaceStyle</key>\n\t<string>Light</string>\n",
+                "dark" => "\t<key>UIUserInterfaceStyle</key>\n\t<string>Dark</string>\n",
+                _ => string.Empty
+            };
+            infoPlistXmlFile.Replace("\t{{PWABuilder.iOS.appearance}}\n", appearanceEntry);
+
+            // Fullscreen hides the status bar at launch; the shell's displayMode keeps it hidden afterwards.
+            infoPlistXmlFile.Replace("<{{PWABuilder.iOS.statusBarHidden}}/>", options.DisplayMode == "fullscreen" ? "<true/>" : "<false/>");
+        }
+
+        /// <summary>
+        /// Sizes the splash icon in both places it is shown: the system launch screen (LaunchScreen.storyboard) and the
+        /// loading view the app shows while the first page loads (Main.storyboard). The two must match or the icon jumps in size after launch.
+        /// </summary>
+        private void UpdateSplashIconSize()
+        {
+            var iconSize = options.SplashIconSize;
+            GetFile("LaunchScreen.storyboard").Replace("{{PWABuilder.iOS.splashIconSize}}", Number(iconSize));
+
+            // The loading view holds the icon, the progress bar under it and the offline icon. It uses fixed frames with
+            // flexible margins, so the frames are worked out here. The icon sits at the center of the loading view, which
+            // is centered on screen, the same place the launch screen puts it. At 64 points these are the original frames.
+            const int sceneWidth = 390, sceneHeight = 844, iconTop = 68, progressWidth = 100, offlineIconWidth = 30;
+            var viewWidth = Math.Max(200, iconSize);
+            var viewHeight = iconSize + (2 * iconTop);
+            var mainStoryboard = GetFile("Main.storyboard");
+            mainStoryboard.Replace("{{PWABuilder.iOS.splashIconSize}}", Number(iconSize));
+            mainStoryboard.Replace("{{PWABuilder.iOS.loadingViewX}}", Number((sceneWidth - viewWidth) / 2.0));
+            mainStoryboard.Replace("{{PWABuilder.iOS.loadingViewY}}", Number((sceneHeight - viewHeight) / 2.0));
+            mainStoryboard.Replace("{{PWABuilder.iOS.loadingViewWidth}}", Number(viewWidth));
+            mainStoryboard.Replace("{{PWABuilder.iOS.loadingViewHeight}}", Number(viewHeight));
+            mainStoryboard.Replace("{{PWABuilder.iOS.loadingIconX}}", Number((viewWidth - iconSize) / 2.0));
+            mainStoryboard.Replace("{{PWABuilder.iOS.loadingProgressX}}", Number((viewWidth - progressWidth) / 2.0));
+            mainStoryboard.Replace("{{PWABuilder.iOS.loadingProgressY}}", Number(iconTop + iconSize + 14));
+            mainStoryboard.Replace("{{PWABuilder.iOS.loadingOfflineIconX}}", Number((viewWidth - offlineIconWidth) / 2.0));
+            mainStoryboard.Replace("{{PWABuilder.iOS.loadingOfflineIconY}}", Number(iconTop + iconSize + 27));
+
+            WriteLaunchIconSet(iconSize);
+        }
+
+        /// <summary>
+        /// Fills the LaunchIcon image set with one file per screen scale, each the smallest generated launch image that
+        /// covers the icon at that scale, and removes the generated sizes the set does not use so Xcode sees no unassigned files.
+        /// </summary>
+        private void WriteLaunchIconSet(int iconSize)
+        {
+            var imageSetDirectory = Path.GetDirectoryName(GetFileByPath(Path.Combine("LaunchIcon.imageset", "Contents.json")).ItemPath)!;
+            var generated = Directory.GetFiles(imageSetDirectory, "launch-*.png")
+                .Select(path => (Path: path, Pixels: GetLaunchImagePixels(path)))
+                .Where(image => image.Pixels > 0)
+                .OrderBy(image => image.Pixels)
+                .ToList();
+            if (generated.Count == 0)
+            {
+                return;
+            }
+
+            var slots = new List<(string Destination, byte[] Bytes)>(3);
+            foreach (var scale in new[] { 1, 2, 3 })
+            {
+                var source = PickLaunchImage(generated.Select(image => image.Pixels), iconSize * scale);
+                var bytes = File.ReadAllBytes(generated.First(image => image.Pixels == source).Path);
+                slots.Add((Path.Combine(imageSetDirectory, $"launch-{scale}x.png"), bytes));
+            }
+
+            generated.ForEach(image => File.Delete(image.Path));
+            slots.ForEach(slot => File.WriteAllBytes(slot.Destination, slot.Bytes));
+        }
+
+        /// <summary>
+        /// Picks the smallest available launch image that covers the wanted pixel size, or the largest one when none does.
+        /// </summary>
+        public static int PickLaunchImage(IEnumerable<int> availablePixels, int wantedPixels)
+        {
+            var ordered = availablePixels.OrderBy(pixels => pixels).ToList();
+            var covering = ordered.Where(pixels => pixels >= wantedPixels).ToList();
+            return covering.Count > 0 ? covering[0] : ordered[^1];
+        }
+
+        /// <summary>
+        /// Reads the pixel size out of a generated launch image name such as launch-512.png. Returns 0 for any other name.
+        /// </summary>
+        private static int GetLaunchImagePixels(string path)
+        {
+            var name = Path.GetFileNameWithoutExtension(path);
+            return int.TryParse(name.AsSpan("launch-".Length), System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out var pixels) ? pixels : 0;
+        }
+
+        private static string Number(double value) => value.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
 
         private void UpdateShortcuts(XcodeFile infoPlistXmlFile)
         {
