@@ -2,18 +2,32 @@
 # Keep StartRight-required SDL, TSA, image-scanning, and release checks enabled.
 name: pwabuilder-preview-$(Date:yyyyMMdd).$(Rev:r)
 
-trigger: none
+trigger:
+  batch: true
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - apps/pwabuilder/*
+      - libraries/*
+      - components/*
+      - scripts/*
+      - Dockerfile.production
+      - package.json
+      - package-lock.json
+      - azure-pipelines.yml
 pr: none
 
 parameters:
-  - name: action
-    displayName: Action
+  - name: deployPreview
+    displayName: Push the image and deploy it to the shared preview slot (off = build only, no Azure access). Runs triggered by main always use the default.
+    type: boolean
+    default: true
+  - name: imageDigest
+    displayName: Redeploy an existing image instead of building (sha256:<64 hex>; leave as "none" to build). Implies deploy; use to roll back.
     type: string
-    default: BuildOnly
-    values:
-      - BuildOnly
-      - PushImage
-      - DeployPreview
+    default: none
 
 variables:
   - name: armServiceConnection
@@ -45,6 +59,7 @@ extends:
     stages:
       - stage: Build
         displayName: Build web image
+        condition: ${{ eq(parameters.imageDigest, 'none') }}
         lockBehavior: sequential
         jobs:
           - job: BuildImage
@@ -59,9 +74,9 @@ extends:
               - pwsh: |
                   $ErrorActionPreference = 'Stop'
                   if ($env:BUILD_SOURCEBRANCH -cne 'refs/heads/main' -or
-                      $env:BUILD_REASON -cne 'Manual' -or
+                      $env:BUILD_REASON -cnotin @('Manual', 'IndividualCI', 'BatchedCI') -or
                       $env:BUILD_REPOSITORY_NAME -cne 'pwa-builder/PWABuilder') {
-                      throw 'Only manually queued builds of pwa-builder/PWABuilder main are supported.'
+                      throw 'Only manual or CI builds of pwa-builder/PWABuilder main are supported.'
                   }
                   if ($env:BUILD_SOURCEVERSION -cnotmatch '^[0-9a-f]{40}$' -or
                       $env:BUILD_BUILDID -notmatch '^[0-9]+$' -or
@@ -132,7 +147,7 @@ extends:
                   NUGET_FEED_URL: $(nugetFeedUrl)
                   NPM_REGISTRY_URL: $(npmRegistryUrl)
 
-              - ${{ if ne(parameters.action, 'BuildOnly') }}:
+              - ${{ if eq(parameters.deployPreview, true) }}:
                   - task: AzureCLI@2
                     name: PushImage
                     displayName: Push image and capture immutable digest
@@ -180,17 +195,23 @@ extends:
                       EXPECTED_SUBSCRIPTION_ID: $(expectedSubscriptionId)
                       IMAGE_TAG: $(BuiltImageTag)
 
-      - ${{ if eq(parameters.action, 'DeployPreview') }}:
+      - ${{ if or(eq(parameters.deployPreview, true), ne(parameters.imageDigest, 'none')) }}:
           - stage: Deploy
             displayName: Deploy shared preview only
-            dependsOn: Build
-            condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.Reason'], 'Manual'))
+            ${{ if eq(parameters.imageDigest, 'none') }}:
+              dependsOn: Build
+            ${{ else }}:
+              dependsOn: []
+            condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), in(variables['Build.Reason'], 'Manual', 'IndividualCI', 'BatchedCI'))
             lockBehavior: sequential
             variables:
-              imageReference: $[ stageDependencies.Build.BuildImage.outputs['PushImage.imageReference'] ]
+              ${{ if eq(parameters.imageDigest, 'none') }}:
+                imageReference: $[ stageDependencies.Build.BuildImage.outputs['PushImage.imageReference'] ]
+              ${{ else }}:
+                imageReference: pwabuilder.azurecr.io/pwabuilder@${{ parameters.imageDigest }}
             jobs:
               - job: DeployPreview
-                timeoutInMinutes: 45
+                timeoutInMinutes: 75
                 templateContext:
                   type: releaseJob
                   isProduction: true
@@ -240,48 +261,86 @@ extends:
                         if ($config.properties.acrUseManagedIdentityCreds -ne $true) {
                             throw 'Configure and verify preview managed-identity ACR pulls before deploying.'
                         }
-                        Write-Host "Previous preview image: $($config.properties.linuxFxVersion)"
-                        $bodyPath = Join-Path $env:AGENT_TEMPDIRECTORY ("pwabuilder-preview-" + [guid]::NewGuid().ToString('N') + '.json')
-                        try {
-                            @{ properties = @{ linuxFxVersion = "DOCKER|$env:IMAGE_REFERENCE" } } |
-                                ConvertTo-Json -Compress | Set-Content -LiteralPath $bodyPath -Encoding utf8
-                            & az rest --method patch --url $configUrl --body "@$bodyPath" --output none --only-show-errors
-                            if ($LASTEXITCODE -ne 0) { throw 'Could not update the preview image reference.' }
-                        } finally {
-                            if (Test-Path -LiteralPath $bodyPath) { Remove-Item -LiteralPath $bodyPath }
-                        }
-                        $configuredImage = & az rest --method get --url $configUrl --query properties.linuxFxVersion --output tsv --only-show-errors
-                        if ($LASTEXITCODE -ne 0 -or $configuredImage -cne "DOCKER|$env:IMAGE_REFERENCE") {
-                            throw 'Preview did not persist the requested image digest.'
-                        }
-                        $restartUrl = "https://management.azure.com${slotId}/restart?api-version=$apiVersion&synchronous=true"
-                        & az rest --method post --url $restartUrl --output none --only-show-errors
-                        if ($LASTEXITCODE -ne 0) { throw 'Preview restart failed.' }
-                        $url = "https://$hostName/"
-                        $timer = [System.Diagnostics.Stopwatch]::StartNew()
-                        while ($timer.Elapsed.TotalSeconds -lt 1800) {
-                            $remaining = 1800 - $timer.Elapsed.TotalSeconds
-                            $requestTimeout = [int] [Math]::Max(1, [Math]::Min(30, [Math]::Floor($remaining)))
+                        & az acr repository show --name pwabuilder --image ($env:IMAGE_REFERENCE -replace '^pwabuilder\.azurecr\.io/', '') --output none --only-show-errors
+                        if ($LASTEXITCODE -ne 0) { throw 'The image digest was not found in the pwabuilder registry.' }
+                        $previousLinuxFxVersion = [string] $config.properties.linuxFxVersion
+                        $newLinuxFxVersion = "DOCKER|$env:IMAGE_REFERENCE"
+                        Write-Host "Previous preview image: $previousLinuxFxVersion"
+
+                        function Set-PreviewImage([string] $linuxFxVersion) {
+                            $bodyPath = Join-Path $env:AGENT_TEMPDIRECTORY ("pwabuilder-preview-" + [guid]::NewGuid().ToString('N') + '.json')
                             try {
-                                $response = Invoke-WebRequest -Uri $url -TimeoutSec $requestTimeout -MaximumRedirection 0 -SkipHttpErrorCheck
-                            } catch [System.Net.Http.HttpRequestException] {
-                                Write-Host "Waiting for preview: $($_.Exception.Message)"
-                                $response = $null
-                            } catch [System.Threading.Tasks.TaskCanceledException] {
-                                Write-Host 'Waiting for preview: HTTP request timed out.'
-                                $response = $null
+                                @{ properties = @{ linuxFxVersion = $linuxFxVersion } } |
+                                    ConvertTo-Json -Compress | Set-Content -LiteralPath $bodyPath -Encoding utf8
+                                & az rest --method patch --url $configUrl --body "@$bodyPath" --output none --only-show-errors
+                                if ($LASTEXITCODE -ne 0) { throw 'Could not update the preview image reference.' }
+                            } finally {
+                                if (Test-Path -LiteralPath $bodyPath) { Remove-Item -LiteralPath $bodyPath }
                             }
-                            if ($null -ne $response -and $response.StatusCode -eq 200) {
-                                Write-Host "Preview returned HTTP 200: $url"
-                                Write-Host "Configured image: $env:IMAGE_REFERENCE"
-                                Write-Host 'Next, verify https://preview.pwabuilder.com and the affected application flows.'
-                                return
+                            $configuredImage = & az rest --method get --url $configUrl --query properties.linuxFxVersion --output tsv --only-show-errors
+                            if ($LASTEXITCODE -ne 0 -or $configuredImage -cne $linuxFxVersion) {
+                                throw 'Preview did not persist the requested image reference.'
                             }
-                            if ($null -ne $response) { Write-Host "Waiting for preview: HTTP $($response.StatusCode)." }
-                            $sleepSeconds = [Math]::Min(15, [Math]::Max(0, 1800 - $timer.Elapsed.TotalSeconds))
-                            if ($sleepSeconds -gt 0) { Start-Sleep -Seconds $sleepSeconds }
+                            $restartUrl = "https://management.azure.com${slotId}/restart?api-version=$apiVersion&synchronous=true"
+                            & az rest --method post --url $restartUrl --output none --only-show-errors
+                            if ($LASTEXITCODE -ne 0) { throw 'Preview restart failed.' }
                         }
-                        throw 'Preview did not return HTTP 200 within 30 minutes. Inspect App Service startup/image-pull logs. No automatic rollback or production swap was performed.'
+
+                        function Wait-Preview([int] $timeoutSeconds) {
+                            $url = "https://$hostName/"
+                            $timer = [System.Diagnostics.Stopwatch]::StartNew()
+                            while ($timer.Elapsed.TotalSeconds -lt $timeoutSeconds) {
+                                $remaining = $timeoutSeconds - $timer.Elapsed.TotalSeconds
+                                $requestTimeout = [int] [Math]::Max(1, [Math]::Min(30, [Math]::Floor($remaining)))
+                                try {
+                                    $response = Invoke-WebRequest -Uri $url -TimeoutSec $requestTimeout -MaximumRedirection 0 -SkipHttpErrorCheck
+                                } catch [System.Net.Http.HttpRequestException] {
+                                    Write-Host "Waiting for preview: $($_.Exception.Message)"
+                                    $response = $null
+                                } catch [System.Threading.Tasks.TaskCanceledException] {
+                                    Write-Host 'Waiting for preview: HTTP request timed out.'
+                                    $response = $null
+                                }
+                                if ($null -ne $response -and $response.StatusCode -eq 200) {
+                                    Write-Host "Preview returned HTTP 200: $url"
+                                    return $true
+                                }
+                                if ($null -ne $response) { Write-Host "Waiting for preview: HTTP $($response.StatusCode)." }
+                                $sleepSeconds = [Math]::Min(15, [Math]::Max(0, $timeoutSeconds - $timer.Elapsed.TotalSeconds))
+                                if ($sleepSeconds -gt 0) { Start-Sleep -Seconds $sleepSeconds }
+                            }
+                            return $false
+                        }
+
+                        $deployFailure = $null
+                        try {
+                            Set-PreviewImage $newLinuxFxVersion
+                            if (-not (Wait-Preview 1800)) { $deployFailure = 'Preview did not return HTTP 200 within 30 minutes.' }
+                        } catch {
+                            $deployFailure = $_.Exception.Message
+                        }
+                        if ($null -eq $deployFailure) {
+                            Write-Host "Configured image: $env:IMAGE_REFERENCE"
+                            Write-Host 'Next, verify https://preview.pwabuilder.com and the affected application flows.'
+                            return
+                        }
+
+                        Write-Host "##vso[task.logissue type=error]Deploy failed: $deployFailure"
+                        if ($previousLinuxFxVersion -ceq $newLinuxFxVersion) {
+                            throw "$deployFailure The previous image is the same image, so there is nothing to roll back to."
+                        }
+                        Write-Host "Rolling back preview to: $previousLinuxFxVersion"
+                        $rolledBack = $false
+                        try {
+                            Set-PreviewImage $previousLinuxFxVersion
+                            $rolledBack = Wait-Preview 900
+                        } catch {
+                            Write-Host "Rollback error: $($_.Exception.Message)"
+                        }
+                        if ($rolledBack) {
+                            throw "$deployFailure Rolled back: preview is serving the previous image again ($previousLinuxFxVersion)."
+                        }
+                        throw "$deployFailure Rollback to the previous image did not return HTTP 200 either; preview needs manual attention."
                     env:
                       EXPECTED_SUBSCRIPTION_ID: $(expectedSubscriptionId)
                       IMAGE_REFERENCE: $(imageReference)
