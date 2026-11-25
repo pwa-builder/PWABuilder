@@ -377,6 +377,28 @@ But if you wish to have a different app icon in Windows Light Mode, you can use 
 
 If you supply those images in your manifest, your app will use them when Windows is in Light Mode. If you don't provide those images, your app will have the same icon across both Windows Light and Dark modes.
 
+### How light mode icons are picked
+
+- **Keep your regular icon too.** For each size, list a regular icon without `color_scheme`, then the light mode icon with `"color_scheme": "light"`. PWABuilder uses the regular icon for the default image and the light one for the Light Mode image. A light mode icon is used for the default image only when it's the only icon of that size.
+- **Only `"light"` is recognized.** PWABuilder treats `"color_scheme": "dark"`, or any other value, like an icon with no `color_scheme`. Your regular icon is already the one Windows shows in Dark Mode, so there's nothing extra to declare for it.
+- **Browsers that don't know `color_scheme` ignore that field, not the icon.** `color_scheme` is still a proposal, and a browser that doesn't support it treats a light mode icon like any other icon of that size. Listing the regular icon of each size before its light mode version is the safest order.
+
+For example, a 44x44 icon with a separate Light Mode version:
+
+```json
+{
+    "src": "/images/icon44x44.png",
+    "sizes": "44x44",
+    "type": "image/png"
+},
+{
+    "src": "/images/icon44x44-light.png",
+    "sizes": "44x44",
+    "type": "image/png",
+    "color_scheme": "light"
+}
+```
+
 ## Unsupported Windows image types
 
 [High contrast icons](https://docs.microsoft.com/en-us/windows/uwp/app-resources/tailor-resources-lang-scale-contrast#contrast) and [accent color icons](https://blog.mzikmund.com/2015/09/en-accent-color-in-windows-10-app-taskbar-icons/) are currently unsupported in the PWABuilder Windows platform. 
