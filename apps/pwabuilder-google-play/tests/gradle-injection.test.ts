@@ -10,6 +10,7 @@ import { escapeGradleString, escapeJsonString } from '@bubblewrap/core/dist/lib/
 import { FeatureManager } from '@bubblewrap/core/dist/lib/features/FeatureManager.js';
 import { validOptions } from './fixtures/android-package-options.js';
 import { BubbleWrapper } from '../services/bubbleWrapper.js';
+import { PackageCreator } from '../services/packageCreator.js';
 import { normalizeAndroidHost } from '../utils/android-host.js';
 import { validateAndroidOptionsRequest } from '../utils/android-options-validation.js';
 
@@ -122,6 +123,64 @@ test('the worker rejects previously queued hostile options before creating a TWA
             ...options, [field]: value,
         }), /Invalid PWA settings/u);
     }
+});
+
+test('resolves icon URLs against the original manifest before Bubblewrap fetches them', () => {
+    const options = {
+        ...validOptions(),
+        webManifestUrl: 'https://example.com/nested/manifest.webmanifest',
+        iconUrl: '/favicon.png',
+        maskableIconUrl: 'icons/maskable.png',
+        monochromeIconUrl: 'https://cdn.example.com/mono.png',
+    };
+    const wrapper = new BubbleWrapper(options, 'unused', null, 'node-fetch');
+    const twa = wrapper['createTwaManifest'](options);
+    assert.equal(twa.iconUrl, 'https://example.com/favicon.png');
+    assert.equal(twa.maskableIconUrl, 'https://example.com/nested/icons/maskable.png');
+    assert.equal(twa.monochromeIconUrl, 'https://cdn.example.com/mono.png');
+
+    const alternate = wrapper['createTwaManifest']({
+        ...options,
+        iconUrl: 'https://cdn.example.com/app.png',
+        maskableIconUrl: '',
+        monochromeIconUrl: '/apple-touch-icon.png',
+    });
+    assert.equal(alternate.iconUrl, 'https://cdn.example.com/app.png');
+    assert.equal(alternate.maskableIconUrl, undefined);
+    assert.equal(alternate.monochromeIconUrl, 'https://example.com/apple-touch-icon.png');
+});
+
+test('retry resolves relative icon URLs using the original manifest rather than the proxy', () => {
+    const options = {
+        ...validOptions(),
+        webManifestUrl: 'https://example.com/nested/manifest.webmanifest',
+        iconUrl: '/favicon.png',
+        maskableIconUrl: 'icons/maskable.png',
+    };
+    const proxied = new PackageCreator()['getAndroidOptionsWithProxiedUrls'](options);
+    const wrapper = new BubbleWrapper(proxied, 'unused', null, 'node-fetch');
+    const twa = wrapper['createTwaManifest'](proxied);
+    assert.ok(twa.iconUrl);
+    assert.ok(twa.maskableIconUrl);
+    assert.equal(new URL(twa.iconUrl).searchParams.get('imageUrl'), 'https://example.com/favicon.png');
+    assert.equal(new URL(twa.maskableIconUrl).searchParams.get('imageUrl'), 'https://example.com/nested/icons/maskable.png');
+});
+
+test('resolves icons when a Meta Quest manifest URL is relative to the full scope', () => {
+    const options = {
+        ...validOptions(),
+        isMetaQuest: true,
+        fullScopeUrl: 'https://example.com/app/',
+        webManifestUrl: 'nested/manifest.webmanifest',
+        iconUrl: 'icons/app.png',
+    };
+    const wrapper = new BubbleWrapper(options, 'unused', null, 'node-fetch');
+    const twa = wrapper['createTwaManifest'](options);
+    assert.equal(twa.iconUrl, 'https://example.com/app/nested/icons/app.png');
+    assert.equal(twa.webManifestUrl?.href, 'https://example.com/app/nested/manifest.webmanifest');
+    const proxied = new PackageCreator()['getAndroidOptionsWithProxiedUrls'](options);
+    assert.equal(new URL(proxied.iconUrl).searchParams.get('imageUrl'), 'https://example.com/app/nested/icons/app.png');
+    assert.equal(new URL(proxied.webManifestUrl).searchParams.get('manifestUrl'), 'https://example.com/app/nested/manifest.webmanifest');
 });
 
 test('only supported options and features reach Bubblewrap from persisted JSON', () => {

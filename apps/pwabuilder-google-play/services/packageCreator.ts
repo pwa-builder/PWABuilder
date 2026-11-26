@@ -259,6 +259,7 @@ export class PackageCreator {
     }
 
     private getAndroidOptionsWithProxiedUrls(options: AndroidPackageOptions): AndroidPackageOptions {
+        const manifestUrl = new URL(options.webManifestUrl, options.fullScopeUrl);
         const absoluteUrlProps: Array<keyof AndroidPackageOptions> = [
             'maskableIconUrl',
             'monochromeIconUrl',
@@ -269,8 +270,8 @@ export class PackageCreator {
         for (let prop of absoluteUrlProps) {
             const url = newOptions[prop];
             if (url && typeof url === 'string') {
-                const absoluteUrl = new URL(url, options.webManifestUrl);
                 const isManifestUrl = prop === 'webManifestUrl';
+                const absoluteUrl = isManifestUrl ? manifestUrl : new URL(url, manifestUrl);
                 if (isManifestUrl) {
                     // We have a special endpoint for manifests that checks the PWABuilder web string cache first.
                     (newOptions as any)[prop] = `https://pwabuilder.com/api/manifests/getFromCacheOrProxy?manifestUrl=${encodeURIComponent(absoluteUrl.toString())}`;
@@ -290,7 +291,7 @@ export class PackageCreator {
                     .filter(icon => !!icon.src)
                     .forEach(icon => {
                         const oldValue = icon.src;
-                        icon.src = PackageCreator.getImageProxyUrl(new URL(icon.src, options.webManifestUrl), options.analysisId);
+                        icon.src = PackageCreator.getImageProxyUrl(new URL(icon.src, manifestUrl), options.analysisId);
                         this.dispatchProgressEvent(`Updated shortcut icon to use image proxy. Old value ${oldValue}, new value ${icon.src}`);
                     });
             });
