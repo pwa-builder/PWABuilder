@@ -330,6 +330,7 @@ export class BubbleWrapper {
             throw new Error('Invalid PWA settings: ' + request.validationErrors.join(', '));
         }
         pwaSettings = request.options;
+        const manifestUrl = new URL(pwaSettings.webManifestUrl, pwaSettings.fullScopeUrl);
 
         const signingKey = {
             path: this.signingKeyInfo?.keyFilePath || '',
@@ -359,16 +360,16 @@ export class BubbleWrapper {
             navigationColorDark: pwaSettings.navigationColorDark,
             navigationDividerColor: pwaSettings.navigationDividerColor,
             navigationDividerColorDark: pwaSettings.navigationDividerColorDark,
-            iconUrl: pwaSettings.iconUrl,
-            maskableIconUrl: pwaSettings.maskableIconUrl,
-            monochromeIconUrl: pwaSettings.monochromeIconUrl,
+            iconUrl: new URL(pwaSettings.iconUrl, manifestUrl).toString(),
+            maskableIconUrl: pwaSettings.maskableIconUrl ? new URL(pwaSettings.maskableIconUrl, manifestUrl).toString() : undefined,
+            monochromeIconUrl: pwaSettings.monochromeIconUrl ? new URL(pwaSettings.monochromeIconUrl, manifestUrl).toString() : undefined,
             splashScreenFadeOutDuration: pwaSettings.splashScreenFadeOutDuration,
             enableNotifications: pwaSettings.enableNotifications,
             enableSiteSettingsShortcut: pwaSettings.enableSiteSettingsShortcut,
             isChromeOSOnly: pwaSettings.isChromeOSOnly,
             isMetaQuest: pwaSettings.isMetaQuest,
             minSdkVersion: pwaSettings.minSdkVersion ?? 24,
-            webManifestUrl: pwaSettings.webManifestUrl,
+            webManifestUrl: manifestUrl.toString(),
             fullScopeUrl: pwaSettings.fullScopeUrl,
             fallbackType: pwaSettings.fallbackType,
             shareTarget: pwaSettings.shareTarget,
@@ -382,7 +383,7 @@ export class BubbleWrapper {
             },
             shortcuts: this.createShortcuts(
                 pwaSettings.shortcuts,
-                pwaSettings.webManifestUrl
+                manifestUrl.toString()
             ),
             signingKey: signingKey,
             generatorApp: 'PWABuilder',
