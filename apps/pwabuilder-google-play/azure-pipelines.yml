@@ -81,16 +81,40 @@ extends:
                   if ($LASTEXITCODE -ne 0 -or $dockerOs -cne 'linux') {
                       throw 'A working Linux Docker daemon is required.'
                   }
-                  $env:DOCKER_BUILDKIT = '1'
-                  & docker build --pull --no-cache --file apps/pwabuilder-google-play/Dockerfile --tag $tag --memory 4GB `
-                      --build-arg UBUNTU_IMAGE=mcr.microsoft.com/mirror/docker/library/ubuntu:24.04 `
-                      --build-arg UBUNTU_MIRROR_HOST=azure.archive.ubuntu.com `
-                      apps/pwabuilder-google-play
-                  if ($LASTEXITCODE -ne 0) { throw 'Docker build failed.' }
+                  if ([string]::IsNullOrWhiteSpace($env:SYSTEM_ACCESSTOKEN)) {
+                      throw 'System.AccessToken is required to download packages from the configured package feed.'
+                  }
+                  # The Maven repository URL is a pipeline variable defined in Azure DevOps, not in this repository.
+                  if ([string]::IsNullOrWhiteSpace($env:MAVEN_FEED_URL) -or $env:MAVEN_FEED_URL.StartsWith('$(') -or
+                      $env:MAVEN_FEED_URL -cnotmatch "^https://[^\s']+$") {
+                      throw "Define the pipeline variable 'mavenFeedUrl' in Azure DevOps (Edit pipeline > Variables) as the https Maven repository URL."
+                  }
+                  # Per-run credentials handed to BuildKit as a secret: never written into an image layer
+                  # or the repository, and deleted when the build ends.
+                  $secrets = Join-Path $env:AGENT_TEMPDIRECTORY ('pwabuilder-docker-secrets-' + [guid]::NewGuid().ToString('N'))
+                  New-Item -ItemType Directory -Path $secrets | Out-Null
+                  try {
+                      $mavenRepo = Join-Path $secrets 'mavenrepo'
+                      "MAVEN_BASE_URL='$($env:MAVEN_FEED_URL.TrimEnd('/'))'`nMAVEN_USER=build`nMAVEN_TOKEN=$env:SYSTEM_ACCESSTOKEN`n" |
+                          Set-Content -LiteralPath $mavenRepo -Encoding utf8NoBOM -NoNewline
+                      if (-not $IsWindows) { & chmod 600 $mavenRepo }
+                      $env:DOCKER_BUILDKIT = '1'
+                      & docker build --pull --no-cache --file apps/pwabuilder-google-play/Dockerfile --tag $tag --memory 4GB `
+                          --build-arg UBUNTU_IMAGE=mcr.microsoft.com/mirror/docker/library/ubuntu:24.04 `
+                          --build-arg UBUNTU_MIRROR_HOST=azure.archive.ubuntu.com `
+                          --secret "id=mavenrepo,src=$mavenRepo" `
+                          apps/pwabuilder-google-play
+                      if ($LASTEXITCODE -ne 0) { throw 'Docker build failed.' }
+                  } finally {
+                      Remove-Item -LiteralPath $secrets -Recurse -Force
+                  }
                   Write-Host "##vso[task.setvariable variable=BuiltImageTag]$tag"
                   Write-Host "Built $tag"
                 displayName: Validate trusted source and build
                 workingDirectory: $(Build.SourcesDirectory)
+                env:
+                  SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+                  MAVEN_FEED_URL: $(mavenFeedUrl)
 
               - ${{ if eq(parameters.deployStaging, true) }}:
                   - task: AzureCLI@2
