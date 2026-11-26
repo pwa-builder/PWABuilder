@@ -56,6 +56,28 @@ RUN echo export JAVA_HOME="/usr/lib/jvm/java-17-openjdk-$(uname -m)/" >> /etc/jd
 
 FROM pre-base AS base
 
+RUN set +e; \
+    echo "=== network probes (HEAD, follows redirects, 20s limit each)"; \
+    for u in \
+      "https://dl.google.com/android/repository/repository2-3.xml" \
+      "https://dl.google.com/android/repository/addons_list-5.xml" \
+      "https://dl.google.com/android/repository/platform-tools-latest-linux.zip" \
+      "https://repo1.maven.org/maven2/org/apache/commons/commons-lang3/3.18.0/commons-lang3-3.18.0.jar" \
+      "https://repo1.maven.org/maven2/com/google/guava/guava/33.7.2-jre/guava-33.7.2-jre.jar" \
+      "https://deb.nodesource.com/setup_24.x" \
+      "https://ms-feed-2.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/" ; do \
+      out=$(curl -sSIL -m 20 -o /dev/null -w 'http=%{http_code} final=%{url_effective}' "$u" 2>&1); rc=$?; \
+      echo "rc=$rc $out <= $u"; \
+    done; \
+    echo "=== sdkmanager (Java) probe, 120s limit"; \
+    wget --quiet -O /tmp/t.zip "https://dl.google.com/android/repository/commandlinetools-linux-${ANDROID_SDK_TOOLS_VERSION}_latest.zip"; \
+    unzip -q /tmp/t.zip -d /tmp/t; \
+    timeout 120 /tmp/t/cmdline-tools/bin/sdkmanager --sdk_root=/tmp/sdk --verbose --list > /tmp/list.log 2>&1; \
+    echo "sdkmanager exit code: $?"; \
+    tail -40 /tmp/list.log; \
+    echo "=== probes finished; failing on purpose so the build stops here"; \
+    exit 1
+
 # Install the Android SDK, then remediate the vulnerable jars that ship inside the
 # Android Lint payload bundled in cmdline-tools. Container scanners keep flagging
 # these and Google's cmdline-tools releases keep bundling them, so a version bump
