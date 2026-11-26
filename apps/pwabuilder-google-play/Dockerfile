@@ -56,28 +56,6 @@ RUN echo export JAVA_HOME="/usr/lib/jvm/java-17-openjdk-$(uname -m)/" >> /etc/jd
 
 FROM pre-base AS base
 
-RUN set +e; \
-    echo "=== network probes (HEAD, follows redirects, 20s limit each)"; \
-    for u in \
-      "https://dl.google.com/android/repository/repository2-3.xml" \
-      "https://dl.google.com/android/repository/addons_list-5.xml" \
-      "https://dl.google.com/android/repository/platform-tools-latest-linux.zip" \
-      "https://repo1.maven.org/maven2/org/apache/commons/commons-lang3/3.18.0/commons-lang3-3.18.0.jar" \
-      "https://repo1.maven.org/maven2/com/google/guava/guava/33.7.2-jre/guava-33.7.2-jre.jar" \
-      "https://deb.nodesource.com/setup_24.x" \
-      "https://ms-feed-2.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/" ; do \
-      out=$(curl -sSIL -m 20 -o /dev/null -w 'http=%{http_code} final=%{url_effective}' "$u" 2>&1); rc=$?; \
-      echo "rc=$rc $out <= $u"; \
-    done; \
-    echo "=== sdkmanager (Java) probe, 120s limit"; \
-    wget --quiet -O /tmp/t.zip "https://dl.google.com/android/repository/commandlinetools-linux-${ANDROID_SDK_TOOLS_VERSION}_latest.zip"; \
-    unzip -q /tmp/t.zip -d /tmp/t; \
-    timeout 120 /tmp/t/cmdline-tools/bin/sdkmanager --sdk_root=/tmp/sdk --verbose --list > /tmp/list.log 2>&1; \
-    echo "sdkmanager exit code: $?"; \
-    tail -40 /tmp/list.log; \
-    echo "=== probes finished; failing on purpose so the build stops here"; \
-    exit 1
-
 # Install the Android SDK, then remediate the vulnerable jars that ship inside the
 # Android Lint payload bundled in cmdline-tools. Container scanners keep flagging
 # these and Google's cmdline-tools releases keep bundling them, so a version bump
@@ -92,7 +70,11 @@ RUN set +e; \
 #     resolves it; scanners read the jar's internal metadata and see 3.18.0.
 #   * Guava is updated in place to 33.7.2-jre for GHSA-xxph-c9ww-hj94,
 #     preserving the SDK's manifest references in the same way.
-RUN wget --quiet -O sdk-tools.zip \
+# The replacement jars come from Maven Central by default. A build that cannot reach it can supply
+# the optional BuildKit secret "mavenrepo": a shell file that sets MAVEN_BASE_URL (a Maven repository
+# that proxies Maven Central), MAVEN_USER and MAVEN_TOKEN. The SHA-256 checks apply either way.
+RUN --mount=type=secret,id=mavenrepo,required=false \
+    wget --quiet -O sdk-tools.zip \
     "https://dl.google.com/android/repository/commandlinetools-linux-${ANDROID_SDK_TOOLS_VERSION}_latest.zip" && \
     mkdir -p "$ANDROID_HOME/cmdline-tools" && \
     unzip -q sdk-tools.zip -d "$ANDROID_HOME/cmdline-tools" && \
@@ -107,11 +89,19 @@ RUN wget --quiet -O sdk-tools.zip \
     echo yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "build-tools;34.0.0" && \
     echo yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses && \
     rm -rf "$ANDROID_HOME/cmdline-tools/latest/lib/external/lint-psi" && \
-    wget --quiet -O "$ANDROID_HOME/cmdline-tools/latest/lib/external/org/apache/commons/commons-lang3/3.16.0/commons-lang3-3.16.0.jar" \
-    "https://repo1.maven.org/maven2/org/apache/commons/commons-lang3/3.18.0/commons-lang3-3.18.0.jar" && \
-    wget --quiet -O "$ANDROID_HOME/cmdline-tools/latest/lib/external/com/google/guava/guava/33.3.1-jre/guava-33.3.1-jre.jar" \
-    "https://repo1.maven.org/maven2/com/google/guava/guava/33.7.2-jre/guava-33.7.2-jre.jar" && \
-    echo "b530942257fb935f8b2cfaa5f8eb5bd59c555fd8e8d01b8ce98912e077ea606c  $ANDROID_HOME/cmdline-tools/latest/lib/external/com/google/guava/guava/33.3.1-jre/guava-33.3.1-jre.jar" | sha256sum -c -
+    sdklib="$ANDROID_HOME/cmdline-tools/latest/lib/external" && \
+    maven_fetch() { \
+      if [ -s /run/secrets/mavenrepo ]; then \
+        . /run/secrets/mavenrepo && \
+        curl -fsSL --retry 3 --max-time 180 -u "$MAVEN_USER:$MAVEN_TOKEN" -o "$2" "$MAVEN_BASE_URL/$1"; \
+      else \
+        curl -fsSL --retry 3 --max-time 180 -o "$2" "https://repo1.maven.org/maven2/$1"; \
+      fi; \
+    } && \
+    maven_fetch org/apache/commons/commons-lang3/3.18.0/commons-lang3-3.18.0.jar "$sdklib/org/apache/commons/commons-lang3/3.16.0/commons-lang3-3.16.0.jar" && \
+    maven_fetch com/google/guava/guava/33.7.2-jre/guava-33.7.2-jre.jar "$sdklib/com/google/guava/guava/33.3.1-jre/guava-33.3.1-jre.jar" && \
+    echo "4eeeae8d20c078abb64b015ec158add383ac581571cddc45c68f0c9ae0230720  $sdklib/org/apache/commons/commons-lang3/3.16.0/commons-lang3-3.16.0.jar" | sha256sum -c - && \
+    echo "b530942257fb935f8b2cfaa5f8eb5bd59c555fd8e8d01b8ce98912e077ea606c  $sdklib/com/google/guava/guava/33.3.1-jre/guava-33.3.1-jre.jar" | sha256sum -c -
 
 
 FROM base AS jenv-base
