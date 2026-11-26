@@ -35,6 +35,7 @@ export class GooglePlayPackagingStatus extends LitElement {
     private jobTimeoutHandle = 0;
     private hasRecordedCompletion = false;
     private hasRecordedFailure = false;
+    private pollingTimedOut = false;
     private pollQueryErrorCount = 0; // Number of consecutive errors when querying for job status
     private deliveryDiagnostics: PackageDeliveryDiagnostics | null = null;
     private lastReportedStatus: GooglePlayPackageJob["status"] | null = null;
@@ -88,6 +89,8 @@ export class GooglePlayPackagingStatus extends LitElement {
 
     updated(changedProperties: PropertyValues<this>) {
         if (changedProperties.has("jobId") && this.jobId) {
+            clearTimeout(this.jobTimeoutHandle);
+            this.pollingTimedOut = false;
             this.reportDelivery("page-opened");
             const localJobId = this.jobId;
             setTimeout(() => this.pollJob(localJobId), this.pollIntervalMs);
@@ -246,16 +249,21 @@ export class GooglePlayPackagingStatus extends LitElement {
     }
 
     private async pollJob(jobId: string): Promise<void> {
+        if (this.pollingTimedOut || this.jobId !== jobId) return;
         let job: GooglePlayPackageJob;
         try {
             job = await getGooglePlayPackageJob(jobId);
+            if (this.pollingTimedOut || this.jobId !== jobId) return;
             this.pollQueryErrorCount = 0; // Reset on successful query
             this.job = job;
         } catch (error) {
+            if (this.pollingTimedOut || this.jobId !== jobId) return;
             this.reportDelivery("poll-failed", packageFailureDetails(error));
-            if (this.pollQueryErrorCount < 1) {
-                // First failure: wait 10 seconds and try again before showing the error.
-                this.pollQueryErrorCount++;
+            const configurationNetworkFailure = error instanceof PackageRequestError
+                && error.phase === "configuration" && error.errorName === "TypeError";
+            if (configurationNetworkFailure || this.pollQueryErrorCount < 1) {
+                // Retry configuration fetch failures until the overall polling deadline.
+                this.pollQueryErrorCount = 1;
                 this.reportDelivery("poll-retry");
                 setTimeout(() => this.pollJob(jobId), this.pollQueryRetryDelayMs);
             } else {
@@ -354,6 +362,7 @@ export class GooglePlayPackagingStatus extends LitElement {
     }
 
     private jobTimedOut(): void {
+        this.pollingTimedOut = true;
         this.reportDelivery("poll-timeout");
         this.appendLog("[error] Timed out waiting for Google Play packaging job to complete.");
         this.hasFailed = true;

@@ -249,6 +249,137 @@ test('polling diagnostics include phase and page lifecycle context before downlo
   expect(JSON.stringify(events)).not.toContain('secret-marker');
 });
 
+test('polling recovers after consecutive configuration network failures', async ({ page }) => {
+  let failuresRemaining = 0;
+  let statusRequests = 0;
+  const events: Record<string, unknown>[] = [];
+  await page.route('**/packaging-test', route => route.fulfill({
+    contentType: 'text/html', body: '<!doctype html><html lang="en"><title>Packaging test</title><body></body></html>'
+  }));
+  await page.route('**/api/packaging/config', async route => {
+    if (failuresRemaining > 0) {
+      failuresRemaining--;
+      await route.abort('failed');
+    } else {
+      await route.fulfill({ json: { androidPackageGeneratorUrl: 'https://pwabuilder-cloudapk.azurewebsites.net' } });
+    }
+  });
+  await page.route('https://pwabuilder-cloudapk.azurewebsites.net/**', async route => {
+    const request = route.request();
+    const headers = { 'access-control-allow-origin': '*', 'access-control-allow-headers': '*' };
+    const path = new URL(request.url()).pathname;
+    if (request.method() === 'OPTIONS') {
+      await route.fulfill({ status: 204, headers });
+    } else if (path === '/packageJobDiagnostics') {
+      events.push(...request.postDataJSON());
+      await route.fulfill({ status: 204, headers });
+    } else if (path === '/getPackageJob') {
+      statusRequests++;
+      const status = statusRequests === 1 ? 'InProgress' : 'Completed';
+      if (status === 'InProgress') failuresRemaining = 2;
+      await route.fulfill({ headers, json: {
+        id: 'googleplaypackagejob:example.com:recovery',
+        supportReference: 'bb16f976-b71c-4658-8d83-1e1a36dc0abc',
+        pwaUrl: 'https://example.com', analysisId: null, status,
+        createdAt: new Date().toISOString(), retryCount: 0, name: 'Example',
+        logs: [], errors: [], downloadAvailable: true,
+      } });
+    } else {
+      await route.fulfill({ headers, contentType: 'application/zip', body: 'zip' });
+    }
+  });
+  await page.goto('/packaging-test');
+  await page.evaluate(async () => {
+    const modulePath = '/src/script/pages/google-play-packaging-status.ts';
+    await import(/* @vite-ignore */ modulePath);
+    const id = 'googleplaypackagejob:example.com:recovery';
+    localStorage.setItem(`package-owner:${id}`, 'a'.repeat(43));
+    const element = document.createElement('google-play-packaging-status');
+    Reflect.set(element, 'pollIntervalMs', 100);
+    Reflect.set(element, 'pollQueryRetryDelayMs', 100);
+    Reflect.set(element, 'jobId', id);
+    document.body.append(element);
+  });
+  await expect(page.getByText('Package created successfully', { exact: true })).toBeVisible({ timeout: 5000 });
+  await expect.poll(() => events.filter(event =>
+    event.event === 'poll-failed' && event.phase === 'configuration' && event.errorName === 'TypeError'
+  ).length).toBe(2);
+  expect(events.some(event => event.event === 'poll-stopped')).toBe(false);
+  expect(statusRequests).toBe(2);
+});
+
+test('polling stops retrying configuration failures at the deadline', async ({ page }) => {
+  let configRequests = 0;
+  await page.route('**/packaging-test', route => route.fulfill({
+    contentType: 'text/html', body: '<!doctype html><html lang="en"><title>Packaging test</title><body></body></html>'
+  }));
+  await page.route('**/api/packaging/config', async route => {
+    configRequests++;
+    await route.abort('failed');
+  });
+  await page.goto('/packaging-test');
+  await page.evaluate(async () => {
+    const modulePath = '/src/script/pages/google-play-packaging-status.ts';
+    await import(/* @vite-ignore */ modulePath);
+    const element = document.createElement('google-play-packaging-status');
+    Reflect.set(element, 'pollIntervalMs', 10);
+    Reflect.set(element, 'pollQueryRetryDelayMs', 50);
+    Reflect.set(element, 'maxWaitTimeMs', 300);
+    Reflect.set(element, 'jobId', 'googleplaypackagejob:example.com:timeout');
+    document.body.append(element);
+  });
+  await expect(page.getByText('Timed out waiting for Google Play packaging job to complete.', { exact: false })).toBeVisible();
+  const requestsAtTimeout = configRequests;
+  expect(requestsAtTimeout).toBeGreaterThan(2);
+  await page.waitForTimeout(300);
+  expect(configRequests).toBe(requestsAtTimeout);
+});
+
+test('a late status response cannot complete a timed-out job', async ({ page }) => {
+  let downloads = 0;
+  await page.route('**/packaging-test', route => route.fulfill({
+    contentType: 'text/html', body: '<!doctype html><html lang="en"><title>Packaging test</title><body></body></html>'
+  }));
+  await page.route('**/api/packaging/config', route => route.fulfill({
+    json: { androidPackageGeneratorUrl: 'https://pwabuilder-cloudapk.azurewebsites.net' }
+  }));
+  await page.route('https://pwabuilder-cloudapk.azurewebsites.net/**', async route => {
+    const request = route.request();
+    const headers = { 'access-control-allow-origin': '*', 'access-control-allow-headers': '*' };
+    const path = new URL(request.url()).pathname;
+    if (request.method() === 'OPTIONS') {
+      await route.fulfill({ status: 204, headers });
+    } else if (path === '/getPackageJob') {
+      await new Promise(resolve => setTimeout(resolve, 600));
+      await route.fulfill({ headers, json: {
+        id: 'googleplaypackagejob:example.com:late', supportReference: null,
+        pwaUrl: 'https://example.com', analysisId: null, status: 'Completed',
+        createdAt: new Date().toISOString(), retryCount: 0, name: 'Example',
+        logs: [], errors: [], downloadAvailable: true,
+      } });
+    } else {
+      if (path === '/downloadPackageZip') downloads++;
+      await route.fulfill({ status: 204, headers });
+    }
+  });
+  await page.goto('/packaging-test');
+  await page.evaluate(async () => {
+    const modulePath = '/src/script/pages/google-play-packaging-status.ts';
+    await import(/* @vite-ignore */ modulePath);
+    const id = 'googleplaypackagejob:example.com:late';
+    localStorage.setItem(`package-owner:${id}`, 'a'.repeat(43));
+    const element = document.createElement('google-play-packaging-status');
+    Reflect.set(element, 'pollIntervalMs', 10);
+    Reflect.set(element, 'maxWaitTimeMs', 250);
+    Reflect.set(element, 'jobId', id);
+    document.body.append(element);
+  });
+  await expect(page.getByText('Timed out waiting for Google Play packaging job to complete.', { exact: false })).toBeVisible();
+  await page.waitForTimeout(700);
+  await expect(page.getByText('Package created successfully', { exact: true })).toHaveCount(0);
+  expect(downloads).toBe(0);
+});
+
 test('failed diagnostics retain a bounded queue and flush after reporting resumes', async ({ page }) => {
   const events: Record<string, unknown>[] = [];
   let diagnosticsAvailable = false;
