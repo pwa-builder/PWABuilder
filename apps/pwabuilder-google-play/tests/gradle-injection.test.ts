@@ -148,6 +148,61 @@ test('only supported options and features reach Bubblewrap from persisted JSON',
     assert.equal(twa.alphaDependencies.enabled, true);
 });
 
+test('modern CSS colors retain their sRGB color in every generated Android color resource', async () => {
+    const options = {
+        ...validOptions(),
+        themeColor: 'oklch(0.49 0.19 277)',
+        themeColorDark: 'oklch(0.49 0.19 277)',
+        backgroundColor: 'oklch(0.49 0.19 277)',
+        navigationColor: 'oklch(0.49 0.19 277)',
+        navigationColorDark: 'oklch(0.49 0.19 277)',
+        navigationDividerColor: 'oklch(0.49 0.19 277)',
+        navigationDividerColorDark: 'oklch(0.49 0.19 277)',
+    };
+    const wrapper = new BubbleWrapper(options, 'unused', null, 'node-fetch');
+    const twa = wrapper['createTwaManifest'](options);
+    const source = await renderGradle(twa);
+
+    for (const field of [
+        'themeColor', 'themeColorDark', 'backgroundColor', 'navigationColor',
+        'navigationColorDark', 'navigationDividerColor', 'navigationDividerColorDark',
+    ] as const) {
+        // Independently converted from OKLCH to linear sRGB and rounded to 8-bit sRGB.
+        assert.equal(twa[field].hex(), '#4B4BC8', field);
+        assertStringLiteral(source, `${field}: `, '#4B4BC8');
+    }
+});
+
+test('CSS color conversion preserves legacy colors, transparency, and optional defaults', () => {
+    for (const [input, hex, alpha] of [
+        ['#123abc', '#123ABC', 1],
+        ['rebeccapurple', '#663399', 1],
+        ['rgb(51, 102, 153)', '#336699', 1],
+        ['hsl(120, 100%, 50%)', '#00FF00', 1],
+        ['transparent', '#000000', 0],
+        ['rgba(51, 102, 153, 0.5)', '#336699', 0.5],
+        ['color(srgb 0.2 0.4 0.6 / 0.5)', '#336699', 0.5],
+        ['lab(100% 0 0)', '#FFFFFF', 1],
+        ['oklch(0.49 0.19 277 / 50%)', '#4B4BC8', 0.5],
+    ] as const) {
+        const options = { ...validOptions(), themeColor: input };
+        const wrapper = new BubbleWrapper(options, 'unused', null, 'node-fetch');
+        const twa = wrapper['createTwaManifest'](options);
+        assert.equal(twa.themeColor.hex(), hex, input);
+        assert.equal(twa.themeColor.alpha(), alpha, input);
+        assert.equal(twa.themeColorDark.hex(), '#000000');
+        assert.equal(twa.navigationDividerColor.alpha(), 0);
+    }
+});
+
+test('invalid and context-dependent colors still fail instead of substituting a default', () => {
+    for (const themeColor of ['not-a-color', 'oklch(broken)', 'var(--brand)', 'currentColor']) {
+        const options = { ...validOptions(), themeColor };
+        const wrapper = new BubbleWrapper(options, 'unused', null, 'node-fetch');
+        assert.throws(() => wrapper['createTwaManifest'](options));
+    }
+});
+
 test('generated Gradle uses androidbrowserhelper 2.7.4 for stable and alpha dependencies', async () => {
     for (const enabled of [false, true]) {
         const twa = manifest();

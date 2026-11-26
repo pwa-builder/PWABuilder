@@ -37,6 +37,7 @@
         "@redis/entraid": "^5.10.0",
         "archiver": "^8.0.0",
         "body-parser": "^2.4.0",
+        "colorjs.io": "^0.7.1",
         "cors": "^2.8.5",
         "del": "^8.0.1",
         "dotenv": "^16.6.1",
