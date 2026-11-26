@@ -10,3 +10,12 @@ pipelines:
           lastModifiedDate: 2026-11-20
         armory:
           lastModifiedDate: 2026-11-20
+  206416:
+    retail:
+      source:
+        eslint:
+          lastModifiedDate: 2026-11-26
+        psscriptanalyzer:
+          lastModifiedDate: 2026-11-26
+        armory:
+          lastModifiedDate: 2026-11-26
