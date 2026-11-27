@@ -27,7 +27,7 @@
     "@clack/prompts": "^0.7.0",
     "applicationinsights": "^3.15.0",
     "chalk": "4.*",
-    "cpx2": "^7.0.1",
+    "cpx2": "^9.1.0",
     "decompress": "^4.2.1",
     "node-fetch": "^2.6.9",
     "yargs": "^17.6.2"
